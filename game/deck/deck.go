@@ -12,13 +12,23 @@ import (
 var _ card.Card = nil
 
 type Deck interface {
+	// Shuffles the deck
 	Shuffle() error
+
+	// Draws one card from the deck
 	Draw() (card.Card, error)
+
+	// Draws N cards from the deck
 	DrawN(int) ([]card.Card, error)
+
+	// Shows the top card
 	Top() (card.Card, error)
+
+	// Duplicates and randomizes the duplication
+	Duplicate() (Deck, error)
 }
 
-// This deck is optimized for not getting shuffled in the middle
+// This is the default implementaiton of the Deck interface
 type DeckImpl struct {
 	order []int
 	drawn int
@@ -52,7 +62,11 @@ func NewShuffledDeck() *DeckImpl {
 // Shuffles the deck
 func (d *DeckImpl) Shuffle() error {
 	for i := range d.order {
-		swap := d.RNG.RandInt(card.DECK_SIZE-i) + i
+		// Don't shuffle cards that are already drawn
+		if i < d.drawn {
+			continue
+		}
+		swap := d.RNG.RandInt(len(d.order)-i) + i
 		currentValue := d.order[i]
 		d.order[i] = d.order[swap]
 		d.order[swap] = currentValue
@@ -75,11 +89,11 @@ func (d *DeckImpl) DrawN(n int) ([]card.Card, error) {
 	if n < 0 {
 		return nil, fmt.Errorf("You must draw a non-negative number of cards")
 	}
-	if d.drawn+n > card.DECK_SIZE {
+	if d.drawn+n > len(d.order) {
 		return nil, fmt.Errorf(
 			"Not enough cards left in deck (needed: %d, has: %d)",
 			n,
-			card.DECK_SIZE-d.drawn,
+			len(d.order)-d.drawn,
 		)
 	}
 	cards := make([]card.Card, n)
@@ -98,11 +112,27 @@ func (d *DeckImpl) DrawN(n int) ([]card.Card, error) {
 
 // Returns the top card without drawing
 func (d *DeckImpl) Top() (card.Card, error) {
-	if d.drawn >= card.DECK_SIZE {
+	if d.drawn >= len(d.order) {
 		return nil, fmt.Errorf("No cards left in deck")
 	}
 	card := card.NewCard(d.order[d.drawn])
 	return card, nil
+}
+
+// Duplicates the deck, and shuffles the duplicated deck to avoid
+// deterministic results from the duplicates
+func (d *DeckImpl) Duplicate() (Deck, error) {
+	newOrder := make([]int, len(d.order))
+	for i, value := range d.order {
+		newOrder[i] = value
+	}
+	newDeck := &DeckImpl{
+		order: newOrder,
+		drawn: d.drawn,
+		RNG:   d.RNG,
+	}
+	newDeck.Shuffle()
+	return newDeck, nil
 }
 
 // Type checking

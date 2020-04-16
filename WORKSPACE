@@ -86,3 +86,10 @@ go_repository(
     sum = "h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=",
     version = "v0.9.1",
 )
+
+go_repository(
+    name = "com_github_jinzhu_copier",
+    importpath = "github.com/jinzhu/copier",
+    sum = "h1:zPPuIq2jAWWPTrGt70eK/BSch+gFAGrNzecsoENgu2o=",
+    version = "v0.0.0-20190924061706-b57f9002281a",
+)

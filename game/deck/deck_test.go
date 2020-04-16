@@ -3,12 +3,16 @@ package deck
 import (
 	testing "testing"
 
+	"runtime"
+
 	mathrand "math/rand"
 
 	assert "github.com/stretchr/testify/assert"
 	card "github.com/yiwensong/ploggo/game/deck/card"
 	rng "github.com/yiwensong/ploggo/game/deck/rng"
 )
+
+var _ *runtime.Func = nil
 
 func TestShuffle(t *testing.T) {
 	deck := NewDeck()
@@ -24,6 +28,26 @@ func TestShuffle(t *testing.T) {
 		28, 9, 21, 49, 19, 25, 14, 33, 38, 32, 2, 27, 41,
 		24, 22, 30, 42, 8, 3, 51, 20, 5, 15, 44, 50, 47,
 		11, 13, 0, 35, 16, 31, 12, 34, 17, 36, 48, 1, 4,
+	}
+	assert.Equal(t, expectedOrder, deck.order)
+}
+
+func TestShuffle_Partial(t *testing.T) {
+	deck := NewDeck()
+	deck.RNG = &rng.SeededRNG{
+		Rand: mathrand.New(mathrand.NewSource(12)),
+	}
+
+	drawn, err := deck.DrawN(26)
+	assert.NotNil(t, drawn)
+	assert.NoError(t, err)
+
+	deck.Shuffle()
+	expectedOrder := []int{
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+		37, 45, 38, 48, 46, 26, 35, 44, 43, 47, 29, 40, 49,
+		41, 50, 34, 27, 33, 32, 51, 39, 30, 36, 42, 28, 31,
 	}
 	assert.Equal(t, expectedOrder, deck.order)
 }
@@ -169,5 +193,34 @@ func TestDrawN_InsufficientCardsTest(t *testing.T) {
 				assert.NoError(t, err)
 			}
 		})
+	}
+}
+
+func TestDuplicate(t *testing.T) {
+	deck := NewDeck()
+	deck.RNG = &rng.SeededRNG{
+		Rand: mathrand.New(mathrand.NewSource(12)),
+	}
+
+	// Draw the first 13 cards
+	drawn, err := deck.DrawN(13)
+	assert.NoError(t, err)
+	assert.NotNil(t, drawn)
+
+	newDeck, err := deck.Duplicate()
+	assert.NoError(t, err)
+
+	expectedOrder := []int{
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+		37, 39, 46, 34, 31, 16, 43, 35, 22, 30, 48, 29, 21,
+		28, 40, 33, 49, 42, 18, 17, 47, 20, 19, 50, 44, 13,
+		27, 14, 45, 25, 41, 51, 23, 32, 24, 36, 15, 26, 38,
+	}
+	assert.Equal(t, expectedOrder, newDeck.(*DeckImpl).order)
+	assert.Equal(t, deck.drawn, newDeck.(*DeckImpl).drawn)
+
+	// Make sure our original order doesn't change
+	for i, cardN := range deck.order {
+		assert.Equal(t, i, cardN)
 	}
 }
