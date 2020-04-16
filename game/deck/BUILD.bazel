@@ -8,7 +8,6 @@ go_library(
     deps = [
         "//game/deck/card:go_default_library",
         "//game/deck/rng:go_default_library",
-        "@com_github_jinzhu_copier//:go_default_library",
         "@com_github_pkg_errors//:go_default_library",
     ],
 )
