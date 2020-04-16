@@ -79,3 +79,10 @@ go_repository(
     sum = "h1:ZCJp+EgiOT7lHqUV2J862kp8Qj64Jo6az82+3Td9dZw=",
     version = "v2.2.2",
 )
+
+go_repository(
+    name = "com_github_pkg_errors",
+    importpath = "github.com/pkg/errors",
+    sum = "h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=",
+    version = "v0.9.1",
+)
