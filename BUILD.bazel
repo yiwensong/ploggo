@@ -1,0 +1,11 @@
+# gazelle:prefix git.corp.stripe.com/stripe-internal/henson
+
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "nogo")
+
+exports_files(["WORKSPACE"])
+
+nogo(
+    name = "go_vet",
+    vet = True,
+    visibility = ["//visibility:public"],
+)
