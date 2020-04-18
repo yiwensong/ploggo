@@ -50,20 +50,20 @@ func (s Suit) ShortName() string {
 type Rank int
 
 func (r Rank) Name() string {
-	if 2 <= r && r <= 9 {
-		return fmt.Sprintf("%d", r)
+	if 0 <= r && r <= 7 {
+		return fmt.Sprintf("%d", r+2)
 	}
 	switch r {
-	case 1:
-		return "A"
-	case 10:
+	case 8:
 		return "T"
-	case 11:
+	case 9:
 		return "J"
-	case 12:
+	case 10:
 		return "Q"
-	default: // King is canonically zero
+	case 11:
 		return "K"
+	default:
+		return "A"
 	}
 }
 
@@ -71,6 +71,7 @@ type Card interface {
 	Suit() Suit
 	Rank() Rank
 	String() string
+	CardNum() int
 }
 
 type CardImpl struct {
@@ -84,6 +85,13 @@ func NewCard(cardNum int) *CardImpl {
 	}
 }
 
+// Takes a rank and suit and returns the card
+func FromRankAndSuit(rank Rank, suit Suit) *CardImpl {
+	return &CardImpl{
+		cardNum: int(rank)*NUM_SUITS + int(suit),
+	}
+}
+
 func (c *CardImpl) Suit() Suit {
 	return Suit(c.cardNum % NUM_SUITS)
 }
@@ -94,4 +102,8 @@ func (c *CardImpl) Rank() Rank {
 
 func (c *CardImpl) String() string {
 	return fmt.Sprintf("%s%s", c.Rank().Name(), c.Suit().ShortName())
+}
+
+func (c *CardImpl) CardNum() int {
+	return c.cardNum
 }

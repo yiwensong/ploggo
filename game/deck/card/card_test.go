@@ -39,19 +39,19 @@ func TestSuitShortNames(t *testing.T) {
 
 func TestRankName(t *testing.T) {
 	ranksAndNames := map[Rank]string{
-		0:  "K",
-		1:  "A",
-		2:  "2",
-		3:  "3",
-		4:  "4",
-		5:  "5",
-		6:  "6",
-		7:  "7",
-		8:  "8",
-		9:  "9",
-		10: "T",
-		11: "J",
-		12: "Q",
+		0:  "2",
+		1:  "3",
+		2:  "4",
+		3:  "5",
+		4:  "6",
+		5:  "7",
+		6:  "8",
+		7:  "9",
+		8:  "T",
+		9:  "J",
+		10: "Q",
+		11: "K",
+		12: "A",
 	}
 
 	for rank, name := range ranksAndNames {
@@ -61,7 +61,7 @@ func TestRankName(t *testing.T) {
 	}
 }
 
-func CardTest(t *testing.T) {
+func TestCard(t *testing.T) {
 	tests := []struct {
 		cardNum int
 		rank    Rank
@@ -107,6 +107,42 @@ func CardTest(t *testing.T) {
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("%s%s", test.rank.Name(), test.suit.ShortName()), func(t *testing.T) {
 			card := NewCard(test.cardNum)
+			assert.Equal(t, test.suit, card.Suit())
+			assert.Equal(t, test.rank, card.Rank())
+		})
+	}
+}
+
+func TestFromRankAndSuit(t *testing.T) {
+	tests := []struct {
+		rank Rank
+		suit Suit
+	}{
+		{
+			rank: 0,
+			suit: Diamond,
+		},
+		{
+			rank: 1,
+			suit: Club,
+		},
+		{
+			rank: 3,
+			suit: Heart,
+		},
+		{
+			rank: 7,
+			suit: Spade,
+		},
+		{
+			rank: 12,
+			suit: Heart,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("%s%s", test.rank.Name(), test.suit.ShortName()), func(t *testing.T) {
+			card := FromRankAndSuit(test.rank, test.suit)
 			assert.Equal(t, test.suit, card.Suit())
 			assert.Equal(t, test.rank, card.Rank())
 		})
