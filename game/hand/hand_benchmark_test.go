@@ -250,3 +250,454 @@ func BenchmarkRankHand(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkSimpleHandImpl_BestHand(b *testing.B) {
+	tests := []struct {
+		testName  string
+		hole      []card.Card
+		community []card.Card
+		expected  *HandRank
+	}{
+		{
+			testName: "high card",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Diamond),
+				card.FromRankAndSuit(card.Rank(11), card.Diamond),
+				card.FromRankAndSuit(card.Rank(9), card.Club),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(10), card.Diamond),
+				card.FromRankAndSuit(card.Rank(0), card.Diamond),
+				card.FromRankAndSuit(card.Rank(1), card.Club),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Spade),
+			},
+			expected: &HandRank{
+				RankType: HighCard,
+				Ranks: []card.Rank{
+					card.Rank(12),
+					card.Rank(11),
+					card.Rank(10),
+					card.Rank(7),
+					card.Rank(2),
+				},
+			},
+		},
+		{
+			testName: "pair with board",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Diamond),
+				card.FromRankAndSuit(card.Rank(11), card.Diamond),
+				card.FromRankAndSuit(card.Rank(9), card.Club),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Spade),
+				card.FromRankAndSuit(card.Rank(0), card.Diamond),
+				card.FromRankAndSuit(card.Rank(1), card.Club),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Spade),
+			},
+			expected: &HandRank{
+				RankType: Pair,
+				Ranks: []card.Rank{
+					card.Rank(12),
+					card.Rank(11),
+					card.Rank(7),
+					card.Rank(2),
+				},
+			},
+		},
+		{
+			testName: "pair in hand",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Diamond),
+				card.FromRankAndSuit(card.Rank(12), card.Spade),
+				card.FromRankAndSuit(card.Rank(9), card.Club),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(11), card.Spade),
+				card.FromRankAndSuit(card.Rank(0), card.Diamond),
+				card.FromRankAndSuit(card.Rank(1), card.Club),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Spade),
+			},
+			expected: &HandRank{
+				RankType: Pair,
+				Ranks: []card.Rank{
+					card.Rank(12),
+					card.Rank(11),
+					card.Rank(7),
+					card.Rank(2),
+				},
+			},
+		},
+		{
+			testName: "pair on board",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(11), card.Spade),
+				card.FromRankAndSuit(card.Rank(0), card.Diamond),
+				card.FromRankAndSuit(card.Rank(9), card.Club),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Diamond),
+				card.FromRankAndSuit(card.Rank(12), card.Spade),
+				card.FromRankAndSuit(card.Rank(1), card.Club),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Spade),
+			},
+			expected: &HandRank{
+				RankType: Pair,
+				Ranks: []card.Rank{
+					card.Rank(12),
+					card.Rank(11),
+					card.Rank(9),
+					card.Rank(7),
+				},
+			},
+		},
+		{
+			testName: "two pair with board",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(11), card.Spade),
+				card.FromRankAndSuit(card.Rank(0), card.Diamond),
+				card.FromRankAndSuit(card.Rank(9), card.Club),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(11), card.Diamond),
+				card.FromRankAndSuit(card.Rank(9), card.Spade),
+				card.FromRankAndSuit(card.Rank(1), card.Club),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Spade),
+			},
+			expected: &HandRank{
+				RankType: TwoPair,
+				Ranks: []card.Rank{
+					card.Rank(11),
+					card.Rank(9),
+					card.Rank(7),
+				},
+			},
+		},
+		{
+			testName: "two pair hand and board",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(11), card.Spade),
+				card.FromRankAndSuit(card.Rank(11), card.Diamond),
+				card.FromRankAndSuit(card.Rank(9), card.Club),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(2), card.Diamond),
+				card.FromRankAndSuit(card.Rank(9), card.Spade),
+				card.FromRankAndSuit(card.Rank(1), card.Club),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Spade),
+			},
+			expected: &HandRank{
+				RankType: TwoPair,
+				Ranks: []card.Rank{
+					card.Rank(11),
+					card.Rank(2),
+					card.Rank(9),
+				},
+			},
+		},
+		{
+			testName: "set",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(11), card.Spade),
+				card.FromRankAndSuit(card.Rank(11), card.Diamond),
+				card.FromRankAndSuit(card.Rank(9), card.Club),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(0), card.Diamond),
+				card.FromRankAndSuit(card.Rank(9), card.Spade),
+				card.FromRankAndSuit(card.Rank(11), card.Club),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Spade),
+			},
+			expected: &HandRank{
+				RankType: Triple,
+				Ranks: []card.Rank{
+					card.Rank(11),
+					card.Rank(9),
+					card.Rank(7),
+				},
+			},
+		},
+		{
+			testName: "paired board trip",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(11), card.Spade),
+				card.FromRankAndSuit(card.Rank(10), card.Diamond),
+				card.FromRankAndSuit(card.Rank(6), card.Club),
+				card.FromRankAndSuit(card.Rank(1), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(11), card.Diamond),
+				card.FromRankAndSuit(card.Rank(9), card.Spade),
+				card.FromRankAndSuit(card.Rank(11), card.Club),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Spade),
+			},
+			expected: &HandRank{
+				RankType: Triple,
+				Ranks: []card.Rank{
+					card.Rank(11),
+					card.Rank(10),
+					card.Rank(9),
+				},
+			},
+		},
+		{
+			testName: "straight",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(11), card.Spade),
+				card.FromRankAndSuit(card.Rank(10), card.Diamond),
+				card.FromRankAndSuit(card.Rank(9), card.Club),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Diamond),
+				card.FromRankAndSuit(card.Rank(9), card.Spade),
+				card.FromRankAndSuit(card.Rank(8), card.Spade),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Diamond),
+			},
+			expected: &HandRank{
+				RankType: Straight,
+				Ranks: []card.Rank{
+					card.Rank(12),
+				},
+			},
+		},
+		{
+			testName: "not a straight (too many cards in hand)",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(11), card.Spade),
+				card.FromRankAndSuit(card.Rank(10), card.Diamond),
+				card.FromRankAndSuit(card.Rank(9), card.Club),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Diamond),
+				card.FromRankAndSuit(card.Rank(4), card.Spade),
+				card.FromRankAndSuit(card.Rank(0), card.Spade),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Diamond),
+			},
+			expected: &HandRank{
+				RankType: HighCard,
+				Ranks: []card.Rank{
+					card.Rank(12),
+					card.Rank(11),
+					card.Rank(10),
+					card.Rank(7),
+					card.Rank(4),
+				},
+			},
+		},
+		{
+			testName: "not a straight (too many cards on board)",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(11), card.Spade),
+				card.FromRankAndSuit(card.Rank(4), card.Diamond),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(0), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Diamond),
+				card.FromRankAndSuit(card.Rank(10), card.Spade),
+				card.FromRankAndSuit(card.Rank(9), card.Spade),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Diamond),
+			},
+			expected: &HandRank{
+				RankType: HighCard,
+				Ranks: []card.Rank{
+					card.Rank(12),
+					card.Rank(11),
+					card.Rank(10),
+					card.Rank(9),
+					card.Rank(4),
+				},
+			},
+		},
+		{
+			testName: "wheel straight",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Spade),
+				card.FromRankAndSuit(card.Rank(3), card.Diamond),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(1), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(0), card.Diamond),
+				card.FromRankAndSuit(card.Rank(2), card.Spade),
+				card.FromRankAndSuit(card.Rank(1), card.Spade),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Diamond),
+			},
+			expected: &HandRank{
+				RankType: Straight,
+				Ranks: []card.Rank{
+					card.Rank(3),
+				},
+			},
+		},
+		{
+			testName: "flush",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Spade),
+				card.FromRankAndSuit(card.Rank(11), card.Spade),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(1), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(0), card.Spade),
+				card.FromRankAndSuit(card.Rank(2), card.Spade),
+				card.FromRankAndSuit(card.Rank(1), card.Spade),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Diamond),
+			},
+			expected: &HandRank{
+				RankType: Flush,
+				Ranks: []card.Rank{
+					card.Rank(12),
+					card.Rank(11),
+					card.Rank(2),
+					card.Rank(1),
+					card.Rank(0),
+				},
+			},
+		},
+		{
+			testName: "full house",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Spade),
+				card.FromRankAndSuit(card.Rank(12), card.Diamond),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(1), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Club),
+				card.FromRankAndSuit(card.Rank(8), card.Spade),
+				card.FromRankAndSuit(card.Rank(1), card.Spade),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Diamond),
+			},
+			expected: &HandRank{
+				RankType: FullHouse,
+				Ranks: []card.Rank{
+					card.Rank(12),
+					card.Rank(8),
+				},
+			},
+		},
+		{
+			testName: "quads",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Spade),
+				card.FromRankAndSuit(card.Rank(12), card.Diamond),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(1), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Club),
+				card.FromRankAndSuit(card.Rank(12), card.Heart),
+				card.FromRankAndSuit(card.Rank(1), card.Spade),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Diamond),
+			},
+			expected: &HandRank{
+				RankType: Quad,
+				Ranks: []card.Rank{
+					card.Rank(12),
+					card.Rank(8),
+				},
+			},
+		},
+		{
+			testName: "straight flush",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Spade),
+				card.FromRankAndSuit(card.Rank(11), card.Spade),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(1), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(10), card.Spade),
+				card.FromRankAndSuit(card.Rank(9), card.Spade),
+				card.FromRankAndSuit(card.Rank(8), card.Spade),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Diamond),
+			},
+			expected: &HandRank{
+				RankType: StraightFlush,
+				Ranks: []card.Rank{
+					card.Rank(12),
+				},
+			},
+		},
+		{
+			testName: "straight flush wheel",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(12), card.Spade),
+				card.FromRankAndSuit(card.Rank(0), card.Spade),
+				card.FromRankAndSuit(card.Rank(2), card.Club),
+				card.FromRankAndSuit(card.Rank(1), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(1), card.Spade),
+				card.FromRankAndSuit(card.Rank(2), card.Spade),
+				card.FromRankAndSuit(card.Rank(3), card.Spade),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Diamond),
+			},
+			expected: &HandRank{
+				RankType: StraightFlush,
+				Ranks: []card.Rank{
+					card.Rank(3),
+				},
+			},
+		},
+		{
+			testName: "Full house with straight",
+			hole: []card.Card{
+				card.FromRankAndSuit(card.Rank(7), card.Spade),
+				card.FromRankAndSuit(card.Rank(7), card.Diamond),
+				card.FromRankAndSuit(card.Rank(6), card.Club),
+				card.FromRankAndSuit(card.Rank(5), card.Club),
+			},
+			community: []card.Card{
+				card.FromRankAndSuit(card.Rank(2), card.Heart),
+				card.FromRankAndSuit(card.Rank(2), card.Spade),
+				card.FromRankAndSuit(card.Rank(9), card.Spade),
+				card.FromRankAndSuit(card.Rank(8), card.Club),
+				card.FromRankAndSuit(card.Rank(7), card.Club),
+			},
+			expected: &HandRank{
+				RankType: FullHouse,
+				Ranks: []card.Rank{
+					card.Rank(7),
+					card.Rank(2),
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		b.Run(test.testName, func(b *testing.B) {
+			evaluator := NewSimpleHandEvaluator(test.hole, test.community)
+			for i := 0; i < b.N; i++ {
+				evaluator.BestHand()
+			}
+		})
+	}
+}
