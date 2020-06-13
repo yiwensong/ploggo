@@ -1,5 +1,6 @@
 load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@io_bazel_rules_go//go:def.bzl", "nogo")
+load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier")
 
 exports_files(["WORKSPACE"])
 
@@ -11,3 +12,7 @@ nogo(
 
 # gazelle:prefix github.com/yiwensong/ploggo
 gazelle(name = "gazelle")
+
+buildifier(
+    name = "buildifier",
+)

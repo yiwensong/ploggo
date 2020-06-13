@@ -4,8 +4,8 @@ load("//ledger_reader:pydeps.bzl", "import_deps")
 py_library(
     name = "sheets_api",
     srcs = ["__init__.py"],
-    deps = import_deps,
     visibility = ["//visibility:public"],
+    deps = import_deps,
 )
 
 py_test(

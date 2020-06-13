@@ -4,7 +4,7 @@ load(":pydeps.bzl", "import_deps")
 py_binary(
     name = "main",
     srcs = ["main.py"],
-    deps =  import_deps + [
+    deps = import_deps + [
         "//ledger_reader/sheets_api:sheets_api",
     ],
 )
