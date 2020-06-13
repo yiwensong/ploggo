@@ -1,37 +1,17 @@
-load("@rules_python//python:defs.bzl", "py_library")
-load("@pydeps//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_library", "py_test")
+load("//ledger_reader:pydeps.bzl", "import_deps")
 
 py_library(
     name = "sheets_api",
     srcs = ["__init__.py"],
-    deps = [
-        requirement("arrow"),
-        requirement("cachetools"),
-        requirement("certifi"),
-        requirement("chardet"),
-        requirement("google-api-core"),
-        requirement("google-api-python-client"),
-        requirement("google-auth-httplib2"),
-        requirement("google-auth-oauthlib"),
-        requirement("google-auth"),
-        requirement("googleapis-common-protos"),
-        requirement("httplib2"),
-        requirement("idna"),
-        requirement("numpy"),
-        requirement("oauthlib"),
-        requirement("pandas"),
-        requirement("protobuf"),
-        requirement("pyasn1-modules"),
-        requirement("pyasn1"),
-        requirement("python-dateutil"),
-        requirement("pytz"),
-        requirement("pyyaml"),
-        requirement("requests-oauthlib"),
-        requirement("requests"),
-        requirement("rsa"),
-        requirement("six"),
-        requirement("uritemplate"),
-        requirement("urllib3"),
-    ],
+    deps = import_deps,
     visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "sheets_api_test",
+    srcs = ["sheets_api_test.py"],
+    deps = [
+        ":sheets_api",
+    ],
 )

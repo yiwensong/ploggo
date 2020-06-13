@@ -5,4 +5,5 @@ py_binary(
     name = "main",
     srcs = ["main.py"],
     deps = import_deps,
+    visibility = ["//visibility:public"],
 )

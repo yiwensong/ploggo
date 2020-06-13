@@ -1,7 +1,7 @@
 import pickle
 
 import googleapiclient.discovery
-import google_auth_oauthlib.flow as google_oauth_flow
+from google_auth_oauthlib import flow
 import pandas
 
 
@@ -28,12 +28,12 @@ def get_client(conf_path: str, cred_cache: str):
     try:
         with open(cred_cache, "rb") as cache_stream:
             creds = pickle.load(cache_stream)
-    except:
-        flow = google_oauth_flow.InstalledAppFlow.from_client_secrets_file(
+    except (FileNotFoundError, pickle.UnpicklingError):
+        cred_flow = flow.InstalledAppFlow.from_client_secrets_file(
             conf_path,
             ["https://www.googleapis.com/auth/spreadsheets"],
         )
-        creds = flow.run_local_server(port=0)
+        creds = cred_flow.run_local_server(port=0)
         with open(cred_cache, "wb") as cache_stream:
             pickle.dump(creds, cache_stream)
 
