@@ -15,7 +15,8 @@ YEAR = 2020
 DATE_REGEX = re.compile(r"^(?P<month>\d\d?)/(?P<day>\d\d?)$")
 # How do you get PL from the lines
 PL_REGEX = re.compile(
-    r"^(?P<name>[^\(\)]*)( \(.*\))?: (?P<sign>-?)\$(?P<amount>[\d.]+)$")
+    r"^(?P<name>[^\(\)]*)( \(.*\))?: (?P<sign>-?)\$(?P<amount>[\d.]+)$"
+)
 
 
 def get_day_to_day_results(
@@ -60,25 +61,18 @@ def get_results(path: str) -> None:
 def parse_arguments() -> argparse.Namespace:
     """Parses arguments and returns the argument namespace."""
     parser = argparse.ArgumentParser(
-        description="reads results and spits out some numbers")
+        description="reads results and spits out some numbers"
+    )
     parser.add_argument(
-        "result_file",
-        type=str,
-        help="Path to the file containing the results",
+        "result_file", type=str, help="Path to the file containing the results",
     )
 
     parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Print the results",
+        "--verbose", action="store_true", help="Print the results",
     )
 
     parser.add_argument(
-        "--output",
-        type=str,
-        nargs="?",
-        default=None,
-        help="Put the results here",
+        "--output", type=str, nargs="?", default=None, help="Put the results here",
     )
 
     parser.add_argument(
@@ -130,8 +124,7 @@ def main() -> None:
 
     if not args.disable_sheets_upload:
         client = sheets_api.get_client(
-            args.google_credentials,
-            args.google_credential_cache,
+            args.google_credentials, args.google_credential_cache,
         )
         sheets_api.upload_dataframe(client, args.sheet, results)
 

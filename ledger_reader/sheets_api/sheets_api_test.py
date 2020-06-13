@@ -11,21 +11,15 @@ def test_upload_dataframe():
     client = mock.MagicMock()
 
     sheet_id = "abcdefg"
-    dataframe = pandas.DataFrame({
-        "2020-06-13": {
-            "yiwen": 1,
-            "not yiwen": 2,
-        },
-        "2020-06-14": {
-            "yiwen": 3,
-            "not yiwen": 1,
-        },
-    })
+    dataframe = pandas.DataFrame(
+        {
+            "2020-06-13": {"yiwen": 1, "not yiwen": 2,},
+            "2020-06-14": {"yiwen": 3, "not yiwen": 1,},
+        }
+    )
 
     sheets_api.upload_dataframe(
-        client,
-        sheet_id,
-        dataframe,
+        client, sheet_id, dataframe,
     )
 
     client.spreadsheets.assert_called_with()
@@ -66,11 +60,7 @@ def test_get_client(pickle_load, pickle_dump, build, appflow, tmpdir):
 @mock.patch("pickle.dump")
 @mock.patch("pickle.load")
 def test_get_client_with_cache(
-    pickle_load,
-    pickle_dump,
-    build,
-    appflow,
-    tmpdir,
+    pickle_load, pickle_dump, build, appflow, tmpdir,
 ):
     creds = tmpdir.join("cred.json")
     creds.write("FAKE CREDENTIAL")
