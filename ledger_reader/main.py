@@ -1,6 +1,4 @@
 import argparse
-import enum
-import json
 import re
 import typing
 
@@ -16,27 +14,26 @@ YEAR = 2020
 # How do you tell if the entry is a date
 DATE_REGEX = re.compile(r"^(?P<month>\d\d?)/(?P<day>\d\d?)$")
 # How do you get PL from the lines
-PL_REGEX = re.compile(r"^(?P<name>[^\(\)]*)( \(.*\))?: (?P<sign>-?)\$(?P<amount>[\d.]+)$")
+PL_REGEX = re.compile(
+    r"^(?P<name>[^\(\)]*)( \(.*\))?: (?P<sign>-?)\$(?P<amount>[\d.]+)$")
 
 
-class States(enum.Enum):
-    NO_INPUT = 1
-    INPUT = 2
-
-
-def get_day_to_day_results(input_stream: typing.IO) -> typing.Dict[str, typing.Dict[str, float]]:
+def get_day_to_day_results(
+    input_stream: typing.IO,
+) -> typing.Dict[str, typing.Dict[str, float]]:
     """Gets the day-to-day results from the ledger"""
     results_dict: typing.Dict[str, typing.Dict[str, float]] = dict()
-    state = States.NO_INPUT
     date = ""
 
     line = input_stream.readline()
     while line:
-        is_date = DATE_REGEX.match(line) 
+        is_date = DATE_REGEX.match(line)
 
         if is_date is not None:
             # Next day
-            date = arrow.get(f"{YEAR}-{is_date.group('month')}-{is_date.group('day')}").isoformat()[:10]
+            date = arrow.get(
+                f"{YEAR}-{is_date.group('month')}-{is_date.group('day')}",
+            ).isoformat()[:10]
         else:
             match = PL_REGEX.match(line)
             if match is not None:
@@ -62,7 +59,8 @@ def get_results(path: str) -> None:
 
 def parse_arguments() -> argparse.Namespace:
     """Parses arguments and returns the argument namespace."""
-    parser = argparse.ArgumentParser(description="reads results and spits out some numbers")
+    parser = argparse.ArgumentParser(
+        description="reads results and spits out some numbers")
     parser.add_argument(
         "result_file",
         type=str,

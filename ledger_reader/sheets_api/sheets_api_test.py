@@ -2,8 +2,8 @@ import sys
 from unittest import mock
 
 import pandas
-import pytest
 
+import pytest
 from ledger_reader import sheets_api
 
 
@@ -48,7 +48,7 @@ def test_upload_dataframe():
 @mock.patch("googleapiclient.discovery.build")
 @mock.patch("pickle.dump")
 @mock.patch("pickle.load")
-def test_get_client( pickle_load, pickle_dump, build, appflow, tmpdir):
+def test_get_client(pickle_load, pickle_dump, build, appflow, tmpdir):
     creds = tmpdir.join("cred.json")
     creds.write("FAKE CREDENTIAL")
     cache = tmpdir.join("does-not-exist")
@@ -65,7 +65,13 @@ def test_get_client( pickle_load, pickle_dump, build, appflow, tmpdir):
 @mock.patch("googleapiclient.discovery.build")
 @mock.patch("pickle.dump")
 @mock.patch("pickle.load")
-def test_get_client_with_cache( pickle_load, pickle_dump, build, appflow, tmpdir):
+def test_get_client_with_cache(
+    pickle_load,
+    pickle_dump,
+    build,
+    appflow,
+    tmpdir,
+):
     creds = tmpdir.join("cred.json")
     creds.write("FAKE CREDENTIAL")
     cache = tmpdir.join("exists.pickle")

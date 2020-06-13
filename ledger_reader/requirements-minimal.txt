@@ -2,5 +2,5 @@ arrow
 google-api-python-client
 google-auth-oauthlib
 pandas
-pyyaml
 pytest
+pyyaml

@@ -1,8 +1,8 @@
 import pickle
 
 import googleapiclient.discovery
-from google_auth_oauthlib import flow
 import pandas
+from google_auth_oauthlib import flow
 
 
 def upload_dataframe(
@@ -12,10 +12,12 @@ def upload_dataframe(
 ) -> None:
     """Uploads the dataframe to a sheet."""
     sheet = client.spreadsheets()
+    headers = [['Player'] + dataframe.columns.to_list()]
+    data = dataframe.to_records().tolist()
     body = {
-        "values": [['Player'] + dataframe.columns.to_list()] + dataframe.to_records().tolist(),
+        "values": headers + data,
     }
-    result = sheet.values().update(
+    sheet.values().update(
         spreadsheetId=sheet_id,
         range="A1",
         valueInputOption="RAW",
