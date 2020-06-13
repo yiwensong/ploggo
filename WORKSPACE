@@ -49,15 +49,17 @@ load("@rules_python//python:repositories.bzl", "py_repositories")
 py_repositories()
 load("@rules_python//python:pip.bzl", "pip_repositories", "pip3_import")
 pip_repositories()
+# End python
 
+# Begin ledger_reader pip requirements
 pip3_import(
-    name = "pydeps",
-    requirements = "//:requirements.txt",
+    name = "ledger_reader_deps",
+    requirements = "//ledger_reader:requirements.txt",
 )
 
-load("@pydeps//:requirements.bzl", "pip_install")
+load("@ledger_reader_deps//:requirements.bzl", "pip_install")
 pip_install()
-# End python
+# End ledger_reader pip requirements
 
 go_repository(
     name = "com_github_davecgh_go_spew",
