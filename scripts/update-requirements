@@ -6,5 +6,10 @@ readonly tempdir=$(mktemp -t update-requirements -d)
 readonly venvdir=${tempdir}/venv
 
 python3 -m virtualenv ${venvdir}
-${venvdir}/bin/pip install --requirement requirements-minimal.txt
+
+for requirement in $(fd --type file requirements-minimal.txt)
+do
+    ${venvdir}/bin/pip install --requirement $requirement
+done
+
 ${venvdir}/bin/pip freeze > requirements.txt
