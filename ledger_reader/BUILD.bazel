@@ -1,37 +1,12 @@
 load("@rules_python//python:defs.bzl", "py_binary")
-load("@ledger_reader_deps//:requirements.bzl", "requirement")
+load("@pydeps//:requirements.bzl", "requirement")
 
 py_binary(
     name = "main",
     srcs = ["main.py"],
     deps = [
         requirement("arrow"),
-        requirement("cachetools"),
-        requirement("certifi"),
-        requirement("chardet"),
-        requirement("google-api-core"),
-        requirement("google-api-python-client"),
-        requirement("google-auth-httplib2"),
-        requirement("google-auth-oauthlib"),
-        requirement("google-auth"),
-        requirement("googleapis-common-protos"),
-        requirement("httplib2"),
-        requirement("idna"),
-        requirement("numpy"),
-        requirement("oauthlib"),
         requirement("pandas"),
-        requirement("protobuf"),
-        requirement("pyasn1-modules"),
-        requirement("pyasn1"),
-        requirement("python-dateutil"),
-        requirement("pytz"),
-        requirement("pyyaml"),
-        requirement("requests-oauthlib"),
-        requirement("requests"),
-        requirement("rsa"),
-        requirement("six"),
-        requirement("uritemplate"),
-        requirement("urllib3"),
         "//ledger_reader/sheets_api:sheets_api",
     ],
 )
