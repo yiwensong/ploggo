@@ -17,6 +17,14 @@ DATE_REGEX = re.compile(r"^(?P<month>\d\d?)/(?P<day>\d\d?)$")
 PL_REGEX = re.compile(
     r"^(?P<name>[^\(\)]*)( \(.*\))?: ?(?P<sign>-?)\$(?P<amount>[\d.]+)$"
 )
+# Get $- to be -$
+NEGATIVE_NUMBER_FMT = re.compile(r"\$-")
+
+KNOWN_ALIASES = {
+    "yiwen": "yiwen song",
+    "nicholas xu": "nick xu",
+    "veersuvrat": "veersuvrat rajpal",
+}
 
 
 def get_day_to_day_results(
@@ -37,17 +45,17 @@ def get_day_to_day_results(
             ).isoformat()[:10]
         else:
             # Skip lines for requesting money
-            if "requests" in line.lower():
-                continue
+            if "requests" not in line.lower():
+                line = NEGATIVE_NUMBER_FMT.sub("-$", line)
+                match = PL_REGEX.match(line)
+                if match is not None:
+                    name = match.group("name").lower()
+                    name = KNOWN_ALIASES.get(name, name)
+                    sign = -1 if match.group("sign") == "-" else 1
+                    amount = float(match.group("amount")) * sign
 
-            match = PL_REGEX.match(line)
-            if match is not None:
-                name = match.group("name").lower()
-                sign = -1 if match.group("sign") == "-" else 1
-                amount = float(match.group("amount")) * sign
-
-                today_result = results_dict.setdefault(date, dict())
-                today_result[name] = amount
+                    today_result = results_dict.setdefault(date, dict())
+                    today_result[name] = amount
 
         line = input_stream.readline()
 
