@@ -24,7 +24,30 @@ KNOWN_ALIASES = {
     "yiwen": "yiwen song",
     "nicholas xu": "nick xu",
     "veersuvrat": "veersuvrat rajpal",
+    "christopher chu": "chris chu",
 }
+
+
+def _parse_line(
+    date: str, line: str, results_dict: typing.Dict[str, typing.Dict[str, float]],
+) -> None:
+    """Parses a non-date line of the input file.
+
+    Warning: this function mutates results_dict.
+    """
+    if "requests" in line.lower():
+        return
+
+    line = NEGATIVE_NUMBER_FMT.sub("-$", line)
+    match = PL_REGEX.match(line)
+    if match is not None:
+        name = match.group("name").lower()
+        name = KNOWN_ALIASES.get(name, name)
+        sign = -1 if match.group("sign") == "-" else 1
+        amount = float(match.group("amount")) * sign
+
+        today_result = results_dict.setdefault(date, dict())
+        today_result[name] = amount
 
 
 def get_day_to_day_results(
@@ -44,18 +67,7 @@ def get_day_to_day_results(
                 f"{YEAR}-{is_date.group('month')}-{is_date.group('day')}",
             ).isoformat()[:10]
         else:
-            # Skip lines for requesting money
-            if "requests" not in line.lower():
-                line = NEGATIVE_NUMBER_FMT.sub("-$", line)
-                match = PL_REGEX.match(line)
-                if match is not None:
-                    name = match.group("name").lower()
-                    name = KNOWN_ALIASES.get(name, name)
-                    sign = -1 if match.group("sign") == "-" else 1
-                    amount = float(match.group("amount")) * sign
-
-                    today_result = results_dict.setdefault(date, dict())
-                    today_result[name] = amount
+            _parse_line(date, line, results_dict)
 
         line = input_stream.readline()
 
