@@ -59,27 +59,17 @@ http_archive(
 # Begin python
 http_archive(
     name = "rules_python",
-    sha256 = "b5668cde8bb6e3515057ef465a35ad712214962f0b3a314e551204266c7be90c",
-    strip_prefix = "rules_python-0.0.2",
-    url = "https://github.com/bazelbuild/rules_python/releases/download/0.0.2/rules_python-0.0.2.tar.gz",
+    sha256 = "a30abdfc7126d497a7698c29c46ea9901c6392d6ed315171a6df5ce433aa4502",
+    strip_prefix = "rules_python-0.6.0",
+    url = "https://github.com/bazelbuild/rules_python/archive/0.6.0.tar.gz",
 )
 
-load("@rules_python//python:repositories.bzl", "py_repositories")
+load("@rules_python//python:pip.bzl", "pip_install")
 
-py_repositories()
-
-load("@rules_python//python:pip.bzl", "pip3_import", "pip_repositories")
-
-pip_repositories()
-
-pip3_import(
+pip_install(
     name = "pydeps",
     requirements = "//:requirements.txt",
 )
-
-load("@pydeps//:requirements.bzl", "pip_install")
-
-pip_install()
 # End python
 
 go_repository(
