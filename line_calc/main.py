@@ -1,12 +1,31 @@
 import argparse
+import json
 import statistics
 import typing
 
+from attr import asdict
+from attr import define
+
+@define
+class LineSummary:
+    bid: float
+    ask: float
+    mid: float
+    spread: float
+
+    def __str__(self):
+        self_dict = asdict(self)
+        return json.dumps(self_dict, indent=4)
+
+
 def get_percentage_line(team1dec: float, team2dec: float) -> float:
-    """Returns the percentage chance that team 1 wins"""
-    perc1 = 1.0/team1dec
-    perc2 = 1.0/team2dec
-    return statistics.mean([perc1, 1.0 - perc2])
+    """Returns a summary of what the line is"""
+    ask = 1.0/team1dec
+    bid = 1.0 - 1.0/team2dec
+    mid = statistics.mean([bid, ask])
+    spread = ask - bid
+    return LineSummary(bid=bid, ask=ask, mid=mid, spread=spread)
+
 
 def parse_arguments() -> argparse.Namespace:
     """Parses arguments and returns the argument namespace."""
@@ -26,7 +45,7 @@ def parse_arguments() -> argparse.Namespace:
 
 
 def main() -> None:
-    """Runs ledger_reader"""
+    """Runs line_calc"""
     args = parse_arguments()
 
     result = get_percentage_line(args.decimal1, args.decimal2)
