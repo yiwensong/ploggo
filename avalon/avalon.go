@@ -22,7 +22,7 @@ type PlayerImpl struct {
 }
 
 func NewPlayer(name string) *PlayerImpl {
-	var playerId PlayerId = PlayerId(fmt.Sprintf("usr_%s", uuid.NewString()))
+	playerId := PlayerId(name)
 	return &PlayerImpl{
 		Id:       playerId,
 		Name:     name,
@@ -55,46 +55,29 @@ func (t Team) OtherTeam() Team {
 	return Blue
 }
 
-type Role struct {
-	Name string
-	Team Team
-}
+type Role string
 
-var (
-	LoyalServant = Role{
-		Name: "loyal_servant",
-		Team: Blue,
-	}
-	Merlin = Role{
-		Name: "merlin",
-		Team: Blue,
-	}
-	Percival = Role{
-		Name: "percival",
-		Team: Blue,
-	}
-
-	Morgana = Role{
-		Name: "morgana",
-		Team: Red,
-	}
-	Assassin = Role{
-		Name: "assassin",
-		Team: Red,
-	}
-	MinionOfMordred = Role{
-		Name: "minion_of_mordred",
-		Team: Red,
-	}
-	Mordred = Role{
-		Name: "mordred",
-		Team: Red,
-	}
-	Oberon = Role{
-		Name: "oberon",
-		Team: Red,
-	}
+const (
+	LoyalServant    Role = "loyal_servant"
+	Merlin               = "merlin"
+	Percival             = "percival"
+	Morgana              = "morgana"
+	Assassin             = "assassin"
+	MinionOfMordred      = "minion_of_mordred"
+	Mordred              = "mordred"
+	Oberon               = "oberon"
 )
+
+var TeamByRole map[Role]Team = map[Role]Team{
+	LoyalServant:    Blue,
+	Merlin:          Blue,
+	Percival:        Blue,
+	Morgana:         Red,
+	Assassin:        Red,
+	MinionOfMordred: Red,
+	Mordred:         Red,
+	Oberon:          Red,
+}
 
 type GameImpl struct {
 	Id             GameId
@@ -117,7 +100,7 @@ func (g *GameImpl) GetTeam(
 			return nil, errors.Errorf("Game contained a player id that did not exist game_id=%q player_id=%q", g.Id, playerId)
 		}
 
-		if role.Team == team {
+		if TeamByRole[role] == team {
 			players = append(players, player)
 		}
 	}
@@ -218,14 +201,14 @@ func (g *GameImpl) GetNewRatingForPlayer(
 	//     * expected is the calculated win rate for the player's team
 	updateConstant := player.GetUpdateConstant()
 	var gameScore float64
-	if g.Winner == role.Team {
+	if g.Winner == TeamByRole[role] {
 		gameScore = 1.0
 	} else {
 		gameScore = 0.0
 	}
-	expectedWin, err := g.GetWinPercentage(role.Team)
+	expectedWin, err := g.GetWinPercentage(TeamByRole[role])
 	if err != nil {
-		return 0, errors.Wrapf(err, "GetWinPercentage(%q, %q)", g.Id, role.Team)
+		return 0, errors.Wrapf(err, "GetWinPercentage(%q, %q)", g.Id, TeamByRole[role])
 	}
 
 	newRating := player.Rating + updateConstant*(gameScore-expectedWin)
