@@ -106,9 +106,15 @@ func Test_GameImpl_GetWinPercentage(t *testing.T) {
 
 			winnersWinPercent, err := game.GetWinPercentage(game.Winner)
 			assert.NoError(t, err)
+			winnersWinPercent2, err := game.GetWinPercentage(game.Winner)
+			assert.NoError(t, err)
+			assert.Equal(t, winnersWinPercent, winnersWinPercent2)
 
 			losersWinPercent, err := game.GetWinPercentage(game.Winner.OtherTeam())
 			assert.NoError(t, err)
+			losersWinPercent2, err := game.GetWinPercentage(game.Winner.OtherTeam())
+			assert.NoError(t, err)
+			assert.Equal(t, losersWinPercent, losersWinPercent2)
 
 			assert.True(t, math.Abs(winnersWinPercent+losersWinPercent-1) < 0.0000001)
 		})
@@ -130,5 +136,45 @@ func Test_GameImpl_GetNewRatingForPlayer(t *testing.T) {
 		} else {
 			assert.Truef(t, player.Rating > newRating, "player number %d (id=%q) should have negative rating update new_rating=%f", i, player.Id, newRating)
 		}
+	}
+}
+
+func Test_GameImpl_UpdatePlayersAfterGame(t *testing.T) {
+	tests := []struct {
+		testName string
+		ratings  [10]float64
+	}{
+		{
+			testName: "all starting",
+			ratings:  [10]float64{1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500},
+		},
+		{
+			testName: "one really high, winning",
+			ratings:  [10]float64{3000, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500},
+		},
+		{
+			testName: "one really high, losing",
+			ratings:  [10]float64{1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 3000},
+		},
+		{
+			testName: "all low",
+			ratings:  [10]float64{300, 300, 300, 300, 300, 300, 300, 300, 300, 300},
+		},
+		{
+			testName: "various",
+			ratings:  [10]float64{300, 200, 1500, 3000, 1500, 100, 2700, 1800, 1500, 1500},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.testName, func(t *testing.T) {
+			scenario := generateGameTestScenario(t, nil)
+			game := scenario.game
+			game.SetWinner(Blue)
+
+			updatedPlayers, err := game.UpdatePlayersAfterGame()
+			assert.NoError(t, err)
+			assert.Equal(t, len(updatedPlayers), 10)
+		})
 	}
 }

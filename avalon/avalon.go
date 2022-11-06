@@ -15,10 +15,9 @@ type (
 )
 
 type PlayerImpl struct {
-	Id     PlayerId
-	Name   string
-	Rating float64
-
+	Id       PlayerId
+	Name     string
+	Rating   float64
 	NumGames int
 }
 
@@ -104,6 +103,8 @@ type GameImpl struct {
 
 	// Keep a static snapshot of players so the game calculation is repeatable
 	PlayersById map[PlayerId]*PlayerImpl
+
+	teamWinPercentages map[Team]float64
 }
 
 // Returns a list of players on a team
@@ -163,21 +164,32 @@ func (g *GameImpl) GetTeamRating(
 // Returns the expectation of the team winning, which is:
 //
 //   1/(1 + 10 ** ((r_other - r_team)/400))
+//
+// cached via teamWinPercentages in game
 func (g *GameImpl) GetWinPercentage(
 	team Team,
 ) (winRate float64, err error) {
-	playerTeamRating, err := g.GetTeamRating(team)
-	if err != nil {
-		return 0, errors.Wrapf(err, "GetTeamRating(%q)", team)
+	if g.teamWinPercentages == nil {
+		g.teamWinPercentages = map[Team]float64{}
 	}
 
-	otherTeam := team.OtherTeam()
-	otherTeamRating, err := g.GetTeamRating(otherTeam)
-	if err != nil {
-		return 0, errors.Wrapf(err, "GetTeamRating(%q)", otherTeam)
-	}
+	_, ok := g.teamWinPercentages[team]
+	if !ok {
 
-	return 1 / (1 + (math.Pow(10, (otherTeamRating-playerTeamRating)/400))), nil
+		playerTeamRating, err := g.GetTeamRating(team)
+		if err != nil {
+			return 0, errors.Wrapf(err, "GetTeamRating(%q)", team)
+		}
+
+		otherTeam := team.OtherTeam()
+		otherTeamRating, err := g.GetTeamRating(otherTeam)
+		if err != nil {
+			return 0, errors.Wrapf(err, "GetTeamRating(%q)", otherTeam)
+		}
+
+		g.teamWinPercentages[team] = 1 / (1 + (math.Pow(10, (otherTeamRating-playerTeamRating)/400)))
+	}
+	return g.teamWinPercentages[team], nil
 }
 
 // Given a game, return what the update should be for that player
@@ -219,4 +231,24 @@ func (g *GameImpl) GetNewRatingForPlayer(
 	newRating := player.Rating + updateConstant*(gameScore-expectedWin)
 
 	return newRating, nil
+}
+
+// Returns a list of updated players for when the game is finished
+//
+// The list of players is deep copied to preserve the game's state
+func (g *GameImpl) UpdatePlayersAfterGame() (updatedPlayers []*PlayerImpl, err error) {
+	for playerId, player := range g.PlayersById {
+		updatedRating, err := g.GetNewRatingForPlayer(playerId)
+		if err != nil {
+			return nil, errors.Wrapf(err, "GetNewRatingForPlayer(%q)", playerId)
+		}
+
+		updatedPlayers = append(updatedPlayers, &PlayerImpl{
+			Id:       playerId,
+			Name:     player.Name,
+			Rating:   updatedRating,
+			NumGames: player.NumGames + 1,
+		})
+	}
+	return
 }
