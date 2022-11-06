@@ -124,6 +124,23 @@ func (g *GameImpl) GetTeam(
 	return players, nil
 }
 
+// Creates a new game
+func NewGame(
+	playersById map[PlayerId]*PlayerImpl,
+	roleByPlayerId map[PlayerId]Role,
+) *GameImpl {
+	var gameId GameId = GameId(fmt.Sprintf("gam_%s", uuid.NewString()))
+	return &GameImpl{
+		Id:             gameId,
+		RoleByPlayerId: roleByPlayerId,
+		PlayersById:    playersById,
+	}
+}
+
+func (g *GameImpl) SetWinner(team Team) {
+	g.Winner = team
+}
+
 // Returns the arthmetic average team rating for a team in the game
 func (g *GameImpl) GetTeamRating(
 	team Team,

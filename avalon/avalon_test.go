@@ -11,13 +11,22 @@ import (
 
 var _ *runtime.Func = nil
 
+type gameTestScenarioOpts struct {
+	ratings *[10]float64
+	winner  *Team
+}
+
 type gameTestScenario struct {
 	game    *GameImpl
 	players *[10]*PlayerImpl
 	roles   [10]Role
 }
 
-func generateGameTestScenario(t *testing.T) *gameTestScenario {
+func generateGameTestScenario(t *testing.T, opts *gameTestScenarioOpts) *gameTestScenario {
+	if opts == nil {
+		opts = &gameTestScenarioOpts{}
+	}
+
 	var roles [10]Role = [10]Role{
 		LoyalServant,
 		LoyalServant,
@@ -39,14 +48,22 @@ func generateGameTestScenario(t *testing.T) *gameTestScenario {
 
 		rolesByPlayerId[players[i].Id] = roles[i]
 		playersById[players[i].Id] = players[i]
+
+		if opts.ratings != nil {
+			players[i].Rating = opts.ratings[i]
+		}
+
 	}
 
-	game := &GameImpl{
-		Id:             "gameId",
-		Winner:         Blue,
-		RoleByPlayerId: rolesByPlayerId,
-		PlayersById:    playersById,
+	game := NewGame(
+		playersById,
+		rolesByPlayerId,
+	)
+	winner := Blue
+	if opts.winner != nil {
+		winner = *opts.winner
 	}
+	game.SetWinner(winner)
 
 	return &gameTestScenario{
 		game:    game,
@@ -56,20 +73,50 @@ func generateGameTestScenario(t *testing.T) *gameTestScenario {
 }
 
 func Test_GameImpl_GetWinPercentage(t *testing.T) {
-	scenario := generateGameTestScenario(t)
-	game := scenario.game
+	tests := []struct {
+		testName string
+		ratings  [10]float64
+	}{
+		{
+			testName: "all starting",
+			ratings:  [10]float64{1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500},
+		},
+		{
+			testName: "one really high, winning",
+			ratings:  [10]float64{3000, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500},
+		},
+		{
+			testName: "one really high, losing",
+			ratings:  [10]float64{1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 3000},
+		},
+		{
+			testName: "all low",
+			ratings:  [10]float64{300, 300, 300, 300, 300, 300, 300, 300, 300, 300},
+		},
+		{
+			testName: "various",
+			ratings:  [10]float64{300, 200, 1500, 3000, 1500, 100, 2700, 1800, 1500, 1500},
+		},
+	}
 
-	winnersWinPercent, err := game.GetWinPercentage(game.Winner)
-	assert.NoError(t, err)
+	for _, test := range tests {
+		t.Run(test.testName, func(t *testing.T) {
+			scenario := generateGameTestScenario(t, nil)
+			game := scenario.game
 
-	losersWinPercent, err := game.GetWinPercentage(game.Winner.OtherTeam())
-	assert.NoError(t, err)
+			winnersWinPercent, err := game.GetWinPercentage(game.Winner)
+			assert.NoError(t, err)
 
-	assert.True(t, math.Abs(winnersWinPercent+losersWinPercent-1) < 0.0000001)
+			losersWinPercent, err := game.GetWinPercentage(game.Winner.OtherTeam())
+			assert.NoError(t, err)
+
+			assert.True(t, math.Abs(winnersWinPercent+losersWinPercent-1) < 0.0000001)
+		})
+	}
 }
 
 func Test_GameImpl_GetNewRatingForPlayer(t *testing.T) {
-	scenario := generateGameTestScenario(t)
+	scenario := generateGameTestScenario(t, nil)
 	game := scenario.game
 	players := scenario.players
 
