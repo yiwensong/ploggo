@@ -87,8 +87,19 @@ func (j *AvalonJsonStorage) savePlayerJson() error {
 	defer f.Close()
 
 	bytes, err := json.Marshal(j.PlayersById)
+
 	if err != nil {
 		return errors.Wrapf(err, "json.Marshal")
+	}
+
+	err = f.Truncate(0)
+	if err != nil {
+		return errors.Wrapf(err, "f.Truncate(0)")
+	}
+
+	_, err = f.Seek(0, 0)
+	if err != nil {
+		return errors.Wrapf(err, "f.Seek(0, 0)")
 	}
 
 	_, err = f.Write(bytes)
@@ -125,6 +136,16 @@ func (j *AvalonJsonStorage) saveGameJson() error {
 		return errors.Wrapf(err, "json.Marshal")
 	}
 
+	err = f.Truncate(0)
+	if err != nil {
+		return errors.Wrapf(err, "f.Truncate(0)")
+	}
+
+	_, err = f.Seek(0, 0)
+	if err != nil {
+		return errors.Wrapf(err, "f.Seek(0, 0)")
+	}
+
 	_, err = f.Write(bytes)
 	if err != nil {
 		return errors.Wrapf(err, "f.Write")
@@ -143,7 +164,18 @@ func (j *AvalonJsonStorage) GetPlayersById(playerIds []avalon.PlayerId) (players
 }
 
 func (j *AvalonJsonStorage) GetPlayer(playerId avalon.PlayerId) (player *avalon.PlayerImpl, err error) {
-	return nil, errors.New("not implemented")
+	players, err := j.GetPlayersById([]avalon.PlayerId{playerId})
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "GetPlayersById(%q)", playerId)
+	}
+
+	player, ok := players[playerId]
+	if !ok {
+		return nil, errors.Errorf("Player %q does not exist", playerId)
+	}
+
+	return player, nil
 }
 
 func (j *AvalonJsonStorage) CreatePlayer(player *avalon.PlayerImpl) error {

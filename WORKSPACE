@@ -134,3 +134,17 @@ go_repository(
     sum = "h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=",
     version = "v1.3.0",
 )
+
+go_repository(
+    name = "com_github_spf13_cobra",
+    importpath = "github.com/spf13/cobra",
+    sum = "h1:o94oiPyS4KD1mPy2fmcYYHHfCxLqYjJOhGsCHFZtEzA=",
+    version = "v1.6.1",
+)
+
+go_repository(
+    name = "com_github_spf13_pflag",
+    importpath = "github.com/spf13/pflag",
+    sum = "h1:iy+VFUOCP1a+8yFto/drg2CJ5u0yRoB7fZw3DKv/JXA=",
+    version = "v1.0.5",
+)

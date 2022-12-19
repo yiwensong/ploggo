@@ -32,7 +32,7 @@ func NewPlayer(name string) *PlayerImpl {
 }
 
 func (p *PlayerImpl) GetUpdateConstant() float64 {
-	return float64(300) / math.Log(float64(p.NumGames+2))
+	return float64(150) / math.Log(float64(p.NumGames+2))
 }
 
 type Team string
