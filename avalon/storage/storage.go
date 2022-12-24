@@ -16,6 +16,7 @@ type AvalonStorage interface {
 	UpdatePlayers([]*avalon.PlayerImpl) error
 
 	SaveGame(*avalon.GameImpl) error
+	GetGames() (games []*avalon.GameImpl, err error)
 }
 
 const AVALON_PLAYER_JSON_FILE = "players.json"
@@ -239,6 +240,15 @@ func (j *AvalonJsonStorage) SaveGame(game *avalon.GameImpl) error {
 	j.Games = append(j.Games, game)
 
 	return nil
+}
+
+func (j *AvalonJsonStorage) GetGames() (games []*avalon.GameImpl, err error) {
+	err = j.loadGameJson()
+	if err != nil {
+		return nil, errors.Wrapf(err, "loadGameJson")
+	}
+
+	return j.Games, nil
 }
 
 var _ AvalonStorage = (*AvalonJsonStorage)(nil)

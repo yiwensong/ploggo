@@ -1,0 +1,20 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "add_game.go",
+        "create_player.go",
+        "get_games.go",
+        "get_players.go",
+        "server.go",
+    ],
+    importpath = "github.com/yiwensong/ploggo/avalon/server",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//avalon:go_default_library",
+        "//avalon/storage:go_default_library",
+        "@com_github_golang_glog//:go_default_library",
+        "@com_github_pkg_errors//:go_default_library",
+    ],
+)
