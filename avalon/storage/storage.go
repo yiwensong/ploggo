@@ -13,6 +13,3 @@ type AvalonStorage interface {
 	SaveGame(*avalon.GameImpl) error
 	GetGames() (games []*avalon.GameImpl, err error)
 }
-
-const AVALON_PLAYER_JSON_FILE = "players.json"
-const AVALON_GAME_JSON_FILE = "games.json"
