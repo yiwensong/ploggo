@@ -6,6 +6,10 @@ go_library(
     importpath = "github.com/yiwensong/ploggo/avalon/storage/postgres",
     visibility = ["//visibility:public"],
     deps = [
+        "//avalon:go_default_library",
+        "//avalon/storage:go_default_library",
+        "@com_github_golang_glog//:go_default_library",
+        "@com_github_jackc_pgx_v5//:go_default_library",
         "@com_github_jackc_pgx_v5//pgxpool:go_default_library",
         "@com_github_pkg_errors//:go_default_library",
     ],
