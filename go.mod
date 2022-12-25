@@ -14,6 +14,7 @@ require (
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/gocraft/dbr v0.0.0-20190714181702-8114670a83bd // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect

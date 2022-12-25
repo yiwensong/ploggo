@@ -40,7 +40,7 @@ type Team string
 const (
 	NoTeam Team = "no_team"
 	Blue   Team = "blue_team"
-	Red         = "red_team"
+	Red    Team = "red_team"
 )
 
 func (t Team) OtherTeam() Team {
