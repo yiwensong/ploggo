@@ -14,9 +14,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "avalon",
 	Short: "record an avalon game",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return rootCmdExec(cmd, args)
-	},
+	RunE:  rootCmdExec,
 }
 
 var minions *[]string

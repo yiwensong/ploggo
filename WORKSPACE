@@ -454,6 +454,13 @@ go_repository(
     version = "v1.10.0",
 )
 
+go_repository(
+    name = "com_github_segmentio_ksuid",
+    importpath = "github.com/segmentio/ksuid",
+    sum = "h1:sBo2BdShXjmcugAMwjugoGUdUV0pcxY5mW4xKRn3v4c=",
+    version = "v1.0.4",
+)
+
 gazelle_dependencies()
 # End gazelle
 
