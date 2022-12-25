@@ -11,7 +11,8 @@ import (
 type GetGamesArgs struct{}
 
 func (s *AvalonServer) GetGames(w http.ResponseWriter, req *http.Request) {
-	games, err := s.Storage.GetGames()
+	ctx := req.Context()
+	games, err := s.Storage.GetGames(ctx)
 	if err != nil {
 		glog.Errorf(errors.Wrapf(err, "GetGames").Error())
 		w.WriteHeader(http.StatusInternalServerError)

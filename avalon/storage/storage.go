@@ -1,6 +1,8 @@
 package storage
 
 import (
+	"context"
+
 	avalon "github.com/yiwensong/ploggo/avalon"
 )
 
@@ -10,13 +12,13 @@ type AvalonStorage interface {
 }
 
 type PlayerStorage interface {
-	GetPlayersById([]avalon.PlayerId) (map[avalon.PlayerId]*avalon.PlayerImpl, error)
-	GetPlayer(avalon.PlayerId) (*avalon.PlayerImpl, error)
-	CreatePlayer(*avalon.PlayerImpl) error
-	UpdatePlayers([]*avalon.PlayerImpl) error
+	GetPlayersById(context.Context, []avalon.PlayerId) (map[avalon.PlayerId]*avalon.PlayerImpl, error)
+	GetPlayer(context.Context, avalon.PlayerId) (*avalon.PlayerImpl, error)
+	CreatePlayer(context.Context, *avalon.PlayerImpl) error
+	UpdatePlayers(context.Context, []*avalon.PlayerImpl) error
 }
 
 type GameStorage interface {
-	SaveGame(*avalon.GameImpl) error
-	GetGames() (games []*avalon.GameImpl, err error)
+	SaveGame(context.Context, *avalon.GameImpl) error
+	GetGames(context.Context) (games []*avalon.GameImpl, err error)
 }

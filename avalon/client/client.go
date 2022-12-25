@@ -1,6 +1,7 @@
 package main
 
 import (
+	context "context"
 	fmt "fmt"
 	os "os"
 	path "path"
@@ -83,6 +84,8 @@ func rootCmdExec(cmd *cobra.Command, args []string) error {
 		basePath = TEST_PATH
 	}
 
+	ctx := context.Background()
+
 	storage_, err := storage.LoadAvalonJsonStorageFromPath(basePath)
 	if err != nil {
 		fmt.Printf("avalon storage errored, making new storage")
@@ -101,13 +104,13 @@ func rootCmdExec(cmd *cobra.Command, args []string) error {
 
 	// Add any new players if they don't exist
 	for _, minionId := range *minions {
-		_, err := storage_.GetPlayer(avalon.PlayerId(minionId))
+		_, err := storage_.GetPlayer(ctx, avalon.PlayerId(minionId))
 		if err != nil {
 			fmt.Printf("GetPlayer(%q) error: %s\n", minionId, err.Error())
 		}
 
 		if err != nil {
-			if err = storage_.CreatePlayer(avalon.NewPlayer(minionId)); err != nil {
+			if err = storage_.CreatePlayer(ctx, avalon.NewPlayer(minionId)); err != nil {
 				return errors.Wrapf(err, "CreatePlayer(%q)", minionId)
 			}
 		}
@@ -117,13 +120,13 @@ func rootCmdExec(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, servantId := range *loyalServants {
-		_, err := storage_.GetPlayer(avalon.PlayerId(servantId))
+		_, err := storage_.GetPlayer(ctx, avalon.PlayerId(servantId))
 		if err != nil {
 			fmt.Printf("GetPlayer(%q) error: %s\n", servantId, err.Error())
 		}
 
 		if err != nil {
-			if err = storage_.CreatePlayer(avalon.NewPlayer(servantId)); err != nil {
+			if err = storage_.CreatePlayer(ctx, avalon.NewPlayer(servantId)); err != nil {
 				return errors.Wrapf(err, "CreatePlayer(%q)", servantId)
 			}
 		}
@@ -132,7 +135,7 @@ func rootCmdExec(cmd *cobra.Command, args []string) error {
 		playerIds = append(playerIds, avalon.PlayerId(servantId))
 	}
 
-	playersById, err := storage_.GetPlayersById(playerIds)
+	playersById, err := storage_.GetPlayersById(ctx, playerIds)
 	if err != nil {
 		return errors.Wrapf(err, "GetPlayersById")
 	}
@@ -145,11 +148,11 @@ func rootCmdExec(cmd *cobra.Command, args []string) error {
 		return errors.Wrapf(err, "UpdatePlayersAfterGame")
 	}
 
-	if err = storage_.SaveGame(game); err != nil {
+	if err = storage_.SaveGame(ctx, game); err != nil {
 		return errors.Wrapf(err, "SaveGame")
 	}
 
-	if err = storage_.UpdatePlayers(updatedPlayers); err != nil {
+	if err = storage_.UpdatePlayers(ctx, updatedPlayers); err != nil {
 		return errors.Wrapf(err, "UpdatePlayers")
 	}
 

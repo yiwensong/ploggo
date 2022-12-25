@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"context"
 	os "os"
 	testing "testing"
 
@@ -9,6 +10,7 @@ import (
 )
 
 func Test_AvalonJsonStorage_CreatePlayer(t *testing.T) {
+	ctx := context.Background()
 	tempdir, err := os.MkdirTemp(os.TempDir(), "avalon_storage_test")
 	assert.NoError(t, err)
 
@@ -17,11 +19,12 @@ func Test_AvalonJsonStorage_CreatePlayer(t *testing.T) {
 
 	player := avalon.NewPlayer("yiwen")
 
-	err = j.CreatePlayer(player)
+	err = j.CreatePlayer(ctx, player)
 	assert.NoError(t, err)
 }
 
 func Test_AvalonJsonStorage_GetPlayersById(t *testing.T) {
+	ctx := context.Background()
 	tempdir, err := os.MkdirTemp(os.TempDir(), "avalon_storage_test")
 	assert.NoError(t, err)
 
@@ -30,16 +33,17 @@ func Test_AvalonJsonStorage_GetPlayersById(t *testing.T) {
 
 	player := avalon.NewPlayer("yiwen")
 
-	err = j.CreatePlayer(player)
+	err = j.CreatePlayer(ctx, player)
 	assert.NoError(t, err)
 
-	players, err := j.GetPlayersById([]avalon.PlayerId{player.Id})
+	players, err := j.GetPlayersById(ctx, []avalon.PlayerId{player.Id})
 	assert.NoError(t, err)
 
 	assert.Equal(t, len(players), 1)
 }
 
 func Test_AvalonJsonStorage_StoresStateBetweenLoads(t *testing.T) {
+	ctx := context.Background()
 	tempdir, err := os.MkdirTemp(os.TempDir(), "avalon_storage_test")
 	assert.NoError(t, err)
 
@@ -48,10 +52,10 @@ func Test_AvalonJsonStorage_StoresStateBetweenLoads(t *testing.T) {
 
 	player := avalon.NewPlayer("yiwen")
 
-	err = j.CreatePlayer(player)
+	err = j.CreatePlayer(ctx, player)
 	assert.NoError(t, err)
 
-	err = j.SaveGame(avalon.NewGame(
+	err = j.SaveGame(ctx, avalon.NewGame(
 		map[avalon.PlayerId]*avalon.PlayerImpl{},
 		map[avalon.PlayerId]avalon.Role{},
 	))
@@ -59,7 +63,7 @@ func Test_AvalonJsonStorage_StoresStateBetweenLoads(t *testing.T) {
 	j2, err := LoadAvalonJsonStorageFromPath(tempdir)
 	assert.NoError(t, err)
 
-	players, err := j2.GetPlayersById([]avalon.PlayerId{player.Id})
+	players, err := j2.GetPlayersById(ctx, []avalon.PlayerId{player.Id})
 	assert.NoError(t, err)
 
 	assert.Equal(t, len(players), 1)

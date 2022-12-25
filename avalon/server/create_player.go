@@ -15,6 +15,7 @@ type CreatePlayerArgs struct {
 
 func (s *AvalonServer) CreatePlayer(w http.ResponseWriter, req *http.Request) {
 	var decodedArgs CreatePlayerArgs
+	ctx := req.Context()
 
 	err := json.NewDecoder(req.Body).Decode(&decodedArgs)
 	if err != nil {
@@ -23,7 +24,7 @@ func (s *AvalonServer) CreatePlayer(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = s.Storage.CreatePlayer(avalon.NewPlayer(decodedArgs.Name))
+	err = s.Storage.CreatePlayer(ctx, avalon.NewPlayer(decodedArgs.Name))
 	if err != nil {
 		glog.Errorf(errors.Wrapf(err, "Avalon.NewPlayer(%s)", decodedArgs.Name).Error())
 		w.WriteHeader(http.StatusInternalServerError)

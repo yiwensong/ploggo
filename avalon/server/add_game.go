@@ -16,6 +16,7 @@ type AddGameArgs struct {
 
 func (s *AvalonServer) AddGame(w http.ResponseWriter, req *http.Request) {
 	var decodedArgs AddGameArgs
+	ctx := req.Context()
 
 	err := json.NewDecoder(req.Body).Decode(&decodedArgs)
 	if err != nil {
@@ -29,7 +30,7 @@ func (s *AvalonServer) AddGame(w http.ResponseWriter, req *http.Request) {
 		playerIds = append(playerIds, playerId)
 	}
 
-	playersById, err := s.Storage.GetPlayersById(playerIds)
+	playersById, err := s.Storage.GetPlayersById(ctx, playerIds)
 	if err != nil {
 		glog.Errorf("GetPlayersById: %s", errors.Wrapf(err, "GetPlayersById"))
 		w.WriteHeader(http.StatusInternalServerError)
@@ -46,13 +47,13 @@ func (s *AvalonServer) AddGame(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err = s.Storage.SaveGame(game); err != nil {
+	if err = s.Storage.SaveGame(ctx, game); err != nil {
 		glog.Errorf("SaveGame: %s", errors.Wrapf(err, "SaveGame"))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if err = s.Storage.UpdatePlayers(updatedPlayers); err != nil {
+	if err = s.Storage.UpdatePlayers(ctx, updatedPlayers); err != nil {
 		glog.Errorf("UpdatePlayers: %s", errors.Wrapf(err, "UpdatePlayers"))
 		w.WriteHeader(http.StatusInternalServerError)
 		return

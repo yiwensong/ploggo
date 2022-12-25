@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"context"
 	json "encoding/json"
 	os "os"
 	path "path"
@@ -145,7 +146,7 @@ func (j *AvalonJsonStorage) saveGameJson() error {
 	return nil
 }
 
-func (j *AvalonJsonStorage) GetPlayersById(playerIds []avalon.PlayerId) (playersById map[avalon.PlayerId]*avalon.PlayerImpl, err error) {
+func (j *AvalonJsonStorage) GetPlayersById(ctx context.Context, playerIds []avalon.PlayerId) (playersById map[avalon.PlayerId]*avalon.PlayerImpl, err error) {
 	err = j.loadPlayerJson()
 	if err != nil {
 		return nil, errors.Wrapf(err, "loadPlayerJson")
@@ -154,8 +155,8 @@ func (j *AvalonJsonStorage) GetPlayersById(playerIds []avalon.PlayerId) (players
 	return j.PlayersById, nil
 }
 
-func (j *AvalonJsonStorage) GetPlayer(playerId avalon.PlayerId) (player *avalon.PlayerImpl, err error) {
-	players, err := j.GetPlayersById([]avalon.PlayerId{playerId})
+func (j *AvalonJsonStorage) GetPlayer(ctx context.Context, playerId avalon.PlayerId) (player *avalon.PlayerImpl, err error) {
+	players, err := j.GetPlayersById(ctx, []avalon.PlayerId{playerId})
 
 	if err != nil {
 		return nil, errors.Wrapf(err, "GetPlayersById(%q)", playerId)
@@ -169,7 +170,7 @@ func (j *AvalonJsonStorage) GetPlayer(playerId avalon.PlayerId) (player *avalon.
 	return player, nil
 }
 
-func (j *AvalonJsonStorage) CreatePlayer(player *avalon.PlayerImpl) error {
+func (j *AvalonJsonStorage) CreatePlayer(ctx context.Context, player *avalon.PlayerImpl) error {
 	err := j.loadPlayerJson()
 	if err != nil {
 		return errors.Wrapf(err, "loadPlayerJson")
@@ -191,7 +192,7 @@ func (j *AvalonJsonStorage) CreatePlayer(player *avalon.PlayerImpl) error {
 	return err
 }
 
-func (j *AvalonJsonStorage) UpdatePlayers(players []*avalon.PlayerImpl) error {
+func (j *AvalonJsonStorage) UpdatePlayers(ctx context.Context, players []*avalon.PlayerImpl) error {
 	err := j.loadPlayerJson()
 	if err != nil {
 		return errors.Wrapf(err, "loadPlayerJson")
@@ -215,7 +216,7 @@ func (j *AvalonJsonStorage) UpdatePlayers(players []*avalon.PlayerImpl) error {
 	return err
 }
 
-func (j *AvalonJsonStorage) SaveGame(game *avalon.GameImpl) error {
+func (j *AvalonJsonStorage) SaveGame(ctx context.Context, game *avalon.GameImpl) error {
 	err := j.loadGameJson()
 	if err != nil {
 		return errors.Wrapf(err, "loadGameJson")
@@ -232,7 +233,7 @@ func (j *AvalonJsonStorage) SaveGame(game *avalon.GameImpl) error {
 	return nil
 }
 
-func (j *AvalonJsonStorage) GetGames() (games []*avalon.GameImpl, err error) {
+func (j *AvalonJsonStorage) GetGames(ctx context.Context) (games []*avalon.GameImpl, err error) {
 	err = j.loadGameJson()
 	if err != nil {
 		return nil, errors.Wrapf(err, "loadGameJson")

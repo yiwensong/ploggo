@@ -3,12 +3,11 @@ package postgres
 import (
 	context "context"
 
-	"github.com/golang/glog"
+	glog "github.com/golang/glog"
 	pgx "github.com/jackc/pgx/v5"
 	pgxpool "github.com/jackc/pgx/v5/pgxpool"
 	errors "github.com/pkg/errors"
-	"github.com/yiwensong/ploggo/avalon"
-	"github.com/yiwensong/ploggo/avalon/storage"
+	storage "github.com/yiwensong/ploggo/avalon/storage"
 )
 
 type AvalonPostgresStorage struct {
@@ -63,30 +62,6 @@ func (s *AvalonPostgresStorage) WithTx(
 	}
 
 	return err
-}
-
-func (s *AvalonPostgresStorage) GetPlayersById([]avalon.PlayerId) (map[avalon.PlayerId]*avalon.PlayerImpl, error) {
-	return nil, errors.New("Not implemented")
-}
-
-func (s *AvalonPostgresStorage) GetPlayer(avalon.PlayerId) (*avalon.PlayerImpl, error) {
-	return nil, errors.New("Not implemented")
-}
-
-func (s *AvalonPostgresStorage) CreatePlayer(*avalon.PlayerImpl) error {
-	return errors.New("Not implemented")
-}
-
-func (s *AvalonPostgresStorage) UpdatePlayers([]*avalon.PlayerImpl) error {
-	return errors.New("Not implemented")
-}
-
-func (s *AvalonPostgresStorage) SaveGame(*avalon.GameImpl) error {
-	return errors.New("Not implemented")
-}
-
-func (s *AvalonPostgresStorage) GetGames() (games []*avalon.GameImpl, err error) {
-	return nil, errors.New("Not implemented")
 }
 
 var _ storage.AvalonStorage = (*AvalonPostgresStorage)(nil)

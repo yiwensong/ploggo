@@ -12,7 +12,8 @@ import (
 type GetPlayersArgs struct{}
 
 func (s *AvalonServer) GetPlayers(w http.ResponseWriter, req *http.Request) {
-	players, err := s.Storage.GetPlayersById([]avalon.PlayerId{})
+	ctx := req.Context()
+	players, err := s.Storage.GetPlayersById(ctx, []avalon.PlayerId{})
 	if err != nil {
 		glog.Errorf(errors.Wrapf(err, "GetPlayersById").Error())
 		w.WriteHeader(http.StatusInternalServerError)
