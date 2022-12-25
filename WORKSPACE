@@ -471,3 +471,40 @@ http_archive(
     url = "https://github.com/bazelbuild/buildtools/archive/master.zip",
 )
 # End buildifier
+
+# Begin docker
+http_archive(
+    name = "io_bazel_rules_docker",
+    sha256 = "b1e80761a8a8243d03ebca8845e9cc1ba6c82ce7c5179ce2b295cd36f7e394bf",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.25.0/rules_docker-v0.25.0.tar.gz"],
+)
+
+load(
+    "@io_bazel_rules_docker//repositories:repositories.bzl",
+    container_repositories = "repositories",
+)
+container_repositories()
+
+load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
+
+container_deps()
+
+load(
+    "@io_bazel_rules_docker//container:container.bzl",
+    "container_pull",
+)
+
+container_pull(
+    name = "io_docker_postgres_amd64",
+    registry = "docker.io",
+    repository = "postgres",
+    digest = "sha256:207a30515abe9fe51666e1821617ce83324690f3d3fc3183e23f301d35a75815",
+)
+
+container_pull(
+    name = "io_docker_postgres_armv8",
+    registry = "docker.io",
+    repository = "postgres",
+    digest = "sha256:c51ad270bcefe2814cb0aab7b03e65a99caf5031fbedd08fe0bf5daf82b2ca13",
+)
+# End docker
