@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Get the path of this script
+SCRIPTPATH="$( cd -- "$(dirname "${0}")" >/dev/null 2>&1 ; pwd -P )"
+
+# Build the db migration generator tool (bazel) and find the binary
+bazel build //db_migration
+CMD="$(bazel cquery --output=starlark --starlark:expr=target.files_to_run.executable.path //db_migration)"
+
+# Run the command
+MIGRATION="$(${CMD} create --path "${SCRIPTPATH}/../avalon/storage/postgres/schema" --name ${1})"
+
+# Edit
+echo "${MIGRATION}"
