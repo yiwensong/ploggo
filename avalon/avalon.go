@@ -146,7 +146,7 @@ func (g *GameImpl) GetTeamRating(
 
 // Returns the expectation of the team winning, which is:
 //
-//   1/(1 + 10 ** ((r_other - r_team)/400))
+//	1/(1 + 10 ** ((r_other - r_team)/400))
 //
 // cached via teamWinPercentages in game
 func (g *GameImpl) GetWinPercentage(
