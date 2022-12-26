@@ -31,7 +31,7 @@ go_test(
         "//avalon/storage/postgres/schema",
         "//containers:postgres",
     ],
-    size = "large",
+    size = "small",
     embed = [":go_default_library"],
     deps = [
         "//avalon:go_default_library",
