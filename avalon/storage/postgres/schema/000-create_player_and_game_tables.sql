@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS players (
 CREATE TABLE IF NOT EXISTS games (
     id varchar(64) CONSTRAINT primary_id_games_id PRIMARY KEY,
     blue_won boolean,
+    created_at timestamp
 );
 
 CREATE TABLE IF NOT EXISTS players_by_game (

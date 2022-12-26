@@ -70,3 +70,5 @@ require (
 	mvdan.cc/gofumpt v0.4.0 // indirect
 	mvdan.cc/xurls/v2 v2.4.0 // indirect
 )
+
+replace github.com/docker/docker => github.com/docker/docker v20.10.3-0.20221013203545-33ab36d6b304+incompatible // 22.06 branch

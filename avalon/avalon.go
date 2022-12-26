@@ -3,9 +3,11 @@ package avalon
 import (
 	fmt "fmt"
 	math "math"
+	"time"
 
-	uuid "github.com/google/uuid"
+	"github.com/google/uuid"
 	errors "github.com/pkg/errors"
+	ksuid "github.com/segmentio/ksuid"
 )
 
 // id types
@@ -21,8 +23,12 @@ type PlayerImpl struct {
 	NumGames int
 }
 
+func NewPlayerId() PlayerId {
+	return PlayerId(uuid.New().String())
+}
+
 func NewPlayer(name string) *PlayerImpl {
-	playerId := PlayerId(name)
+	playerId := NewPlayerId()
 	return &PlayerImpl{
 		Id:       playerId,
 		Name:     name,
@@ -83,6 +89,7 @@ type GameImpl struct {
 	Id             GameId
 	Winner         Team
 	RoleByPlayerId map[PlayerId]Role
+	Timestamp      time.Time
 
 	// Keep a static snapshot of players so the game calculation is repeatable
 	PlayersById map[PlayerId]*PlayerImpl
@@ -113,11 +120,12 @@ func NewGame(
 	playersById map[PlayerId]*PlayerImpl,
 	roleByPlayerId map[PlayerId]Role,
 ) *GameImpl {
-	var gameId GameId = GameId(fmt.Sprintf("gam_%s", uuid.NewString()))
+	var gameId GameId = GameId(fmt.Sprintf("gam_%s", ksuid.New().String()))
 	return &GameImpl{
 		Id:             gameId,
 		RoleByPlayerId: roleByPlayerId,
 		PlayersById:    playersById,
+		Timestamp:      time.Now(),
 	}
 }
 

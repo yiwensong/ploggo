@@ -24,4 +24,5 @@ alias(
 container_image(
     name = "postgres",
     base = ":postgres_base_image",
+    visibility = ["//visibility:public"],
 )

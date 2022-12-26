@@ -2,6 +2,9 @@ package postgres
 
 import (
 	context "context"
+	"fmt"
+	"os"
+	"path/filepath"
 
 	glog "github.com/golang/glog"
 	pgx "github.com/jackc/pgx/v5"
@@ -22,7 +25,12 @@ func NewAvalonPostgresStorage(
 	cleanup func(),
 	err error,
 ) {
-	pool, err := pgxpool.New(ctx, connString)
+	config, err := pgxpool.ParseConfig(connString)
+	if err != nil {
+		return nil, func() {}, errors.Wrapf(err, "pgx.ParseConfig")
+	}
+
+	pool, err := pgxpool.NewWithConfig(ctx, config)
 	if err != nil {
 		return nil, func() {}, errors.Wrapf(err, "pgxpool.New")
 	}
@@ -37,21 +45,19 @@ func NewAvalonPostgresStorage(
 func (s *AvalonPostgresStorage) WithTx(
 	ctx context.Context,
 	perform func(context.Context, pgx.Tx) error,
-) error {
+) (err error) {
 	tx, err := s.Pool.Begin(ctx)
 	if err != nil {
 		return errors.Wrapf(err, "pgxpool.Begin")
 	}
 	defer func() {
-		// If there is no error, try to commit the transaction
-		if err == nil {
-			err = tx.Commit(ctx)
-		}
-
 		// If there is an error (including the commit attempt), roll back
-		if err != nil {
+		if tx != nil && err != nil {
+			glog.Errorf("WithTx encountered an error and is attempting to rollback: %s", err.Error())
 			rollBackErr := tx.Rollback(ctx)
-			glog.Errorf("WithTx encountered an error but db rollback failed: %s", rollBackErr.Error())
+			if rollBackErr != nil {
+				glog.Errorf("WithTx encountered an error but db rollback failed: %s", rollBackErr.Error())
+			}
 		}
 	}()
 
@@ -61,7 +67,47 @@ func (s *AvalonPostgresStorage) WithTx(
 		return err
 	}
 
+	err = tx.Commit(ctx)
+	if err != nil {
+		return errors.Wrapf(err, "tx.Commit")
+	}
+
 	return err
+}
+
+func (s *AvalonPostgresStorage) RunMigrations(
+	ctx context.Context,
+	migrationFilesPath string,
+) error {
+	// Load all migration files
+	globPattern := fmt.Sprintf("%s/*.sql", migrationFilesPath)
+	matches, err := filepath.Glob(globPattern)
+	if err != nil {
+		return errors.Wrapf(err, "filepath.Glob(%s)", globPattern)
+	}
+
+	migrations := []string{}
+	for _, file := range matches {
+		bytes, err := os.ReadFile(file)
+		if err != nil {
+			return errors.Wrapf(err, "os.ReadFile(%q)", file)
+		}
+
+		migrations = append(migrations, string(bytes))
+	}
+
+	return s.WithTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		glog.Infof("RunMigrations")
+
+		for _, migration := range migrations {
+			_, err := tx.Exec(ctx, migration)
+			if err != nil {
+				return errors.Wrapf(err, "tx.Exec(%q)", migration)
+			}
+		}
+
+		return nil
+	})
 }
 
 var _ storage.AvalonStorage = (*AvalonPostgresStorage)(nil)

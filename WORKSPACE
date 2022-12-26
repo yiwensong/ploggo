@@ -1066,8 +1066,9 @@ go_repository(
 go_repository(
     name = "com_github_docker_docker",
     importpath = "github.com/docker/docker",
-    sum = "h1:kH9tx6XO+359d+iAkumyKDc5Q1kOwPuAUaeri48nD6E=",
-    version = "v20.10.20+incompatible",
+    replace = "github.com/docker/docker",
+    sum = "h1:ieHXawdo9MXKnRkKuVWEfEN3PDQUqIjz/T8vMfIaHkM=",
+    version = "v20.10.3-0.20221013203545-33ab36d6b304+incompatible",
 )
 
 go_repository(

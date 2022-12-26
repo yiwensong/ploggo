@@ -1,4 +1,4 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "go_default_library",
@@ -14,7 +14,30 @@ go_library(
         "//avalon/storage:go_default_library",
         "@com_github_golang_glog//:go_default_library",
         "@com_github_jackc_pgx_v5//:go_default_library",
+        "@com_github_jackc_pgx_v5//pgtype:go_default_library",
         "@com_github_jackc_pgx_v5//pgxpool:go_default_library",
         "@com_github_pkg_errors//:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "games_test.go",
+        "players_test.go",
+        "postgres_test.go",
+    ],
+    data = [
+        "//avalon/storage/postgres/schema",
+        "//containers:postgres",
+    ],
+    size = "large",
+    embed = [":go_default_library"],
+    deps = [
+        "//avalon:go_default_library",
+        "@com_github_pkg_errors//:go_default_library",
+        "@com_github_stretchr_testify//assert:go_default_library",
+        "@com_github_testcontainers_testcontainers_go//:go_default_library",
+        "@com_github_testcontainers_testcontainers_go//wait:go_default_library",
     ],
 )
