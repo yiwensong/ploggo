@@ -4,10 +4,13 @@ import (
 	context "context"
 	"fmt"
 	testing "testing"
+	"time"
 
 	assert "github.com/stretchr/testify/assert"
 	"github.com/yiwensong/ploggo/avalon"
 )
+
+var fakeTimestamp = time.Date(2000, 1, 1, 0, 0, 0, 0, time.FixedZone("UTC-8", -8*60*60))
 
 func TestGetGames(t *testing.T) {
 	ctx := context.Background()
@@ -42,8 +45,23 @@ func TestSaveGame(t *testing.T) {
 	}
 
 	game := avalon.NewGame(playersById, rolesByPlayerId)
+	game.SetWinner(avalon.Red)
 	err = storage.SaveGame(ctx, game)
 	assert.NoError(t, err)
 
 	// Ensure game is saved by loading
+	returnedGame, err := storage.GetGame(ctx, game.Id)
+	assert.NoError(t, err)
+
+	// Save times from both and compare later
+	gameTime := game.CreatedAt
+	returnedTime := returnedGame.CreatedAt
+
+	// Fake a date so we can compare structs
+	game.CreatedAt = fakeTimestamp
+	returnedGame.CreatedAt = fakeTimestamp
+	assert.Equal(t, game, returnedGame)
+
+	// Check that the two's UTC time matches
+	assert.Equal(t, gameTime.UTC(), returnedTime.UTC())
 }

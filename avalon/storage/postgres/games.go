@@ -2,6 +2,7 @@ package postgres
 
 import (
 	context "context"
+	"fmt"
 
 	glog "github.com/golang/glog"
 	pgx "github.com/jackc/pgx/v5"
@@ -110,8 +111,8 @@ func (s *AvalonPostgresStorage) SaveGame(ctx context.Context, game *avalon.GameI
 				row.GameId,
 				row.PlayerId,
 				row.PlayerName,
-				row.PlayerNumGames,
 				row.PlayerRating,
+				row.PlayerNumGames,
 				row.PlayerRole,
 			)
 			if err != nil {
@@ -123,8 +124,15 @@ func (s *AvalonPostgresStorage) SaveGame(ctx context.Context, game *avalon.GameI
 	})
 }
 
-func (s *AvalonPostgresStorage) GetGames(ctx context.Context) (games []*avalon.GameImpl, err error) {
-	query := `
+type GameQueryOpts struct {
+	Id avalon.GameId
+}
+
+func (s *AvalonPostgresStorage) getGamesQueryLoader(
+	ctx context.Context,
+	opts *GameQueryOpts,
+) (games []*avalon.GameImpl, err error) {
+	queryTemplate := `
 		SELECT
 			games.id,
 			games.blue_won,
@@ -141,16 +149,33 @@ func (s *AvalonPostgresStorage) GetGames(ctx context.Context) (games []*avalon.G
 				blue_won,
 				created_at
 			FROM games
+			%s
 			LIMIT $1
 		) AS games
 		ON p.game_id = games.id
 		ORDER BY games.id`
 
+	args := []interface{}{
+		MAX_GAMES,
+	}
+
+	whereStmt := ""
+	argN := 2
+	if opts != nil && opts.Id != "" {
+		whereStmt = fmt.Sprintf("WHERE games.id = $%d", argN)
+		args = append(args, opts.Id)
+		argN++
+	}
+
+	query := fmt.Sprintf(
+		queryTemplate,
+		whereStmt,
+	)
 	resultRows := []*JoinedPlayersByGame{}
 	perform := func(ctx context.Context, tx pgx.Tx) error {
 		glog.Infof("GetGames")
 
-		rows, err := tx.Query(ctx, query, MAX_GAMES)
+		rows, err := tx.Query(ctx, query, args...)
 		if err != nil {
 			return errors.Wrapf(err, "tx.Query(%q)", query)
 		}
@@ -228,4 +253,26 @@ func (s *AvalonPostgresStorage) GetGames(ctx context.Context) (games []*avalon.G
 	}
 
 	return games, nil
+}
+
+func (s *AvalonPostgresStorage) GetGame(
+	ctx context.Context,
+	id avalon.GameId,
+) (game *avalon.GameImpl, err error) {
+	games, err := s.getGamesQueryLoader(ctx, &GameQueryOpts{Id: id})
+	if err != nil {
+		return nil, errors.Wrapf(err, "getGamesQueryLoader(%q)", id)
+	}
+
+	if len(games) < 1 {
+		return nil, errors.Errorf("Game with id=%q does not exist", id)
+	}
+
+	return games[0], nil
+}
+
+func (s *AvalonPostgresStorage) GetGames(
+	ctx context.Context,
+) (games []*avalon.GameImpl, err error) {
+	return s.getGamesQueryLoader(ctx, nil)
 }
