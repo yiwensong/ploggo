@@ -2,7 +2,7 @@ package postgres
 
 import (
 	context "context"
-	"fmt"
+	fmt "fmt"
 
 	glog "github.com/golang/glog"
 	pgx "github.com/jackc/pgx/v5"
