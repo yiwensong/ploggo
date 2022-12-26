@@ -2,9 +2,9 @@ package postgres
 
 import (
 	context "context"
-	"fmt"
-	"os"
-	"path/filepath"
+	fmt "fmt"
+	os "os"
+	filepath "path/filepath"
 
 	glog "github.com/golang/glog"
 	pgx "github.com/jackc/pgx/v5"

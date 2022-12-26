@@ -2,10 +2,10 @@ package postgres
 
 import (
 	context "context"
-	"flag"
-	"fmt"
-	"os"
-	"os/exec"
+	flag "flag"
+	fmt "fmt"
+	os "os"
+	exec "os/exec"
 	testing "testing"
 
 	errors "github.com/pkg/errors"

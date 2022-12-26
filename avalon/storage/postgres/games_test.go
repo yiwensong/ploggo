@@ -2,12 +2,12 @@ package postgres
 
 import (
 	context "context"
-	"fmt"
+	fmt "fmt"
 	testing "testing"
-	"time"
+	time "time"
 
 	assert "github.com/stretchr/testify/assert"
-	"github.com/yiwensong/ploggo/avalon"
+	avalon "github.com/yiwensong/ploggo/avalon"
 )
 
 var fakeTimestamp = time.Date(2000, 1, 1, 0, 0, 0, 0, time.FixedZone("UTC-8", -8*60*60))

@@ -2,7 +2,7 @@ package postgres
 
 import (
 	context "context"
-	"fmt"
+	fmt "fmt"
 	testing "testing"
 
 	assert "github.com/stretchr/testify/assert"

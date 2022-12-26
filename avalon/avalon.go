@@ -3,9 +3,9 @@ package avalon
 import (
 	fmt "fmt"
 	math "math"
-	"time"
+	time "time"
 
-	"github.com/google/uuid"
+	uuid "github.com/google/uuid"
 	errors "github.com/pkg/errors"
 	ksuid "github.com/segmentio/ksuid"
 )
