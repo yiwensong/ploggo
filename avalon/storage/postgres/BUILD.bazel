@@ -22,6 +22,7 @@ go_library(
 
 go_test(
     name = "go_default_test",
+    size = "small",
     srcs = [
         "games_test.go",
         "players_test.go",
@@ -31,7 +32,6 @@ go_test(
         "//avalon/storage/postgres/schema",
         "//containers:postgres",
     ],
-    size = "small",
     embed = [":go_default_library"],
     deps = [
         "//avalon:go_default_library",

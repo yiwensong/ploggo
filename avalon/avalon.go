@@ -10,6 +10,9 @@ import (
 	ksuid "github.com/segmentio/ksuid"
 )
 
+// Export for faking
+var TimeNow = time.Now
+
 // id types
 type (
 	PlayerId string
@@ -64,12 +67,12 @@ func (t Team) OtherTeam() Team {
 type Role string
 
 const (
-	LoyalServant    Role = "loyal_servant"
+	LoyalServant    Role = "servant"
 	Merlin               = "merlin"
 	Percival             = "percival"
 	Morgana              = "morgana"
 	Assassin             = "assassin"
-	MinionOfMordred      = "minion_of_mordred"
+	MinionOfMordred      = "minion"
 	Mordred              = "mordred"
 	Oberon               = "oberon"
 )
@@ -89,7 +92,7 @@ type GameImpl struct {
 	Id             GameId
 	Winner         Team
 	RoleByPlayerId map[PlayerId]Role
-	Timestamp      time.Time
+	CreatedAt      time.Time
 
 	// Keep a static snapshot of players so the game calculation is repeatable
 	PlayersById map[PlayerId]*PlayerImpl
@@ -125,7 +128,7 @@ func NewGame(
 		Id:             gameId,
 		RoleByPlayerId: roleByPlayerId,
 		PlayersById:    playersById,
-		Timestamp:      time.Now(),
+		CreatedAt:      TimeNow(),
 	}
 }
 

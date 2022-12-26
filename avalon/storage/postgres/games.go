@@ -14,7 +14,7 @@ import (
 type GameEntry struct {
 	Id        pgtype.Text
 	BlueWon   pgtype.Bool
-	Timestamp pgtype.Timestamp
+	CreatedAt pgtype.Timestamp
 }
 
 // A row for `players_by_game` table in db
@@ -25,6 +25,15 @@ type PlayersByGameEntry struct {
 	PlayerRating   pgtype.Float8
 	PlayerNumGames pgtype.Int8
 	PlayerRole     pgtype.Text
+}
+
+type PlayersByGameEntryForWriting struct {
+	GameId         avalon.GameId
+	PlayerId       avalon.PlayerId
+	PlayerName     string
+	PlayerRating   float64
+	PlayerNumGames int
+	PlayerRole     avalon.Role
 }
 
 // A row from the results when joining `players_by_name`
@@ -38,7 +47,80 @@ type JoinedPlayersByGame struct {
 const MAX_GAMES = 100
 
 func (s *AvalonPostgresStorage) SaveGame(ctx context.Context, game *avalon.GameImpl) error {
-	return errors.New("Not implemented")
+	insertGameQuery := `
+		INSERT INTO games (
+			id,
+			blue_won,
+			created_at
+		)
+		VALUES (
+			$1,
+			$2,
+			$3
+		)`
+
+	insertPlayersByGameQuery := `
+		INSERT INTO players_by_game (
+			game_id,
+			player_id,
+			player_name,
+			player_rating,
+			player_num_games,
+			player_role
+		)
+		VALUES (
+			$1,
+			$2,
+			$3,
+			$4,
+			$5,
+			$6
+		)`
+
+	playersByGameRows := []*PlayersByGameEntryForWriting{}
+	for playerId, role := range game.RoleByPlayerId {
+		player, ok := game.PlayersById[playerId]
+		if !ok {
+			return errors.Errorf("Player %q had a role but no player data", playerId)
+		}
+
+		playersByGameRows = append(playersByGameRows, &PlayersByGameEntryForWriting{
+			GameId:         game.Id,
+			PlayerId:       playerId,
+			PlayerName:     player.Name,
+			PlayerRating:   player.Rating,
+			PlayerNumGames: player.NumGames,
+			PlayerRole:     role,
+		})
+	}
+
+	blueWon := game.Winner == avalon.Blue
+
+	return s.WithTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		// Insert the game
+		_, err := tx.Exec(ctx, insertGameQuery, game.Id, blueWon, game.CreatedAt)
+		if err != nil {
+			return errors.Wrapf(err, "tx.Exec(%q, %+v)", insertGameQuery, game)
+		}
+
+		for _, row := range playersByGameRows {
+			_, err := tx.Exec(
+				ctx,
+				insertPlayersByGameQuery,
+				row.GameId,
+				row.PlayerId,
+				row.PlayerName,
+				row.PlayerNumGames,
+				row.PlayerRating,
+				row.PlayerRole,
+			)
+			if err != nil {
+				return errors.Wrapf(err, "tx.Exec(%q, %+v)", insertPlayersByGameQuery, row)
+			}
+		}
+
+		return nil
+	})
 }
 
 func (s *AvalonPostgresStorage) GetGames(ctx context.Context) (games []*avalon.GameImpl, err error) {
@@ -80,7 +162,7 @@ func (s *AvalonPostgresStorage) GetGames(ctx context.Context) (games []*avalon.G
 			err = rows.Scan(
 				&resultRow.Id,
 				&resultRow.BlueWon,
-				&resultRow.Timestamp,
+				&resultRow.CreatedAt,
 				&resultRow.PlayerId,
 				&resultRow.PlayerName,
 				&resultRow.PlayerRating,
@@ -132,7 +214,7 @@ func (s *AvalonPostgresStorage) GetGames(ctx context.Context) (games []*avalon.G
 			nextGame = &avalon.GameImpl{
 				Id:        avalon.GameId(row.Id.String),
 				Winner:    winner,
-				Timestamp: row.Timestamp.Time,
+				CreatedAt: row.CreatedAt.Time,
 				RoleByPlayerId: map[avalon.PlayerId]avalon.Role{
 					playerId: avalon.Role(row.PlayerRole.String),
 				},
