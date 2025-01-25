@@ -6,7 +6,6 @@ import os
 import pathlib
 
 import yaml
-from apiclient.errors import HttpError
 
 import youtube_uploader.uploader as uploader
 

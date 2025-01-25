@@ -6,7 +6,6 @@ py_binary(
     srcs = ["main.py"],
     deps = [
         ":uploader",
-        requirement("google-api-python-client"),
         requirement("pyyaml"),
     ],
 )

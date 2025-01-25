@@ -1,18 +1,29 @@
 load("@bazel_gazelle//:def.bzl", "gazelle")
-load("@io_bazel_rules_go//go:def.bzl", "nogo")
-load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier")
+load("@python_3_13//:defs.bzl", "compile_pip_requirements")
+# load("@io_bazel_rules_go//go:def.bzl", "nogo")
+# load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier")
 
-exports_files(["WORKSPACE"])
+# exports_files(["WORKSPACE"])
 
-nogo(
-    name = "go_vet",
-    vet = True,
-    visibility = ["//visibility:public"],
-)
+# nogo(
+#     name = "go_vet",
+#     vet = True,
+#     visibility = ["//visibility:public"],
+# )
 
 # gazelle:prefix github.com/yiwensong/ploggo
 gazelle(name = "gazelle")
 
-buildifier(
-    name = "buildifier",
+# buildifier(
+#     name = "buildifier",
+# )
+
+# This stanza calls a rule that generates targets for managing pip dependencies
+# with pip-compile for a particular python version.
+compile_pip_requirements(
+    name = "requirements",
+    timeout = "moderate",
+    src = "python-requirements/requirements.in",
+    requirements_txt = "python-requirements/requirements.txt",
+    requirements_windows = "python-requirements/requirements-windows.txt",
 )

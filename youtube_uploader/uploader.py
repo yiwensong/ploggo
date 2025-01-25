@@ -7,9 +7,9 @@ import random
 
 import google_auth_oauthlib.flow
 import httplib2
-from apiclient.discovery import build
-from apiclient.errors import HttpError
-from apiclient.http import MediaFileUpload
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaFileUpload
 
 
 # Explicitly tell the underlying HTTP transport library not to retry, since
