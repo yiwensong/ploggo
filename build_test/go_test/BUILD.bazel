@@ -1,0 +1,15 @@
+load("@rules_go//go:def.bzl", "go_library", "go_binary")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["hello.go"],
+    importpath = "github.com/yiwensong/ploggo/go_test",
+    visibility = ["//visibility:public"],
+    deps = [],
+)
+
+go_binary(
+    name = "hello",
+    embed = [":go_default_library"],
+    visibility = ["//visibility:public"],
+)
