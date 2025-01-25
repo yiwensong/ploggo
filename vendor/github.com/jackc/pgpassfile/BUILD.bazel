@@ -1,0 +1,9 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["pgpass.go"],
+    importmap = "github.com/yiwensong/ploggo/vendor/github.com/jackc/pgpassfile",
+    importpath = "github.com/jackc/pgpassfile",
+    visibility = ["//visibility:public"],
+)

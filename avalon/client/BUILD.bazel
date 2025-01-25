@@ -1,4 +1,4 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
+load("@rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
 
 go_library(
     name = "go_default_library",
@@ -8,8 +8,8 @@ go_library(
     deps = [
         "//avalon:go_default_library",
         "//avalon/storage:go_default_library",
-        "@com_github_pkg_errors//:go_default_library",
-        "@com_github_spf13_cobra//:go_default_library",
+        "//vendor/github.com/pkg/errors:go_default_library",
+        "//vendor/github.com/spf13/cobra:go_default_library",
     ],
 )
 

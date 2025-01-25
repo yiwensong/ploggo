@@ -1,0 +1,21 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "cluster_volume.go",
+        "create_options.go",
+        "deprecated.go",
+        "list_response.go",
+        "options.go",
+        "volume.go",
+        "volume_update.go",
+    ],
+    importmap = "github.com/yiwensong/ploggo/vendor/github.com/docker/docker/api/types/volume",
+    importpath = "github.com/docker/docker/api/types/volume",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//vendor/github.com/docker/docker/api/types/filters:go_default_library",
+        "//vendor/github.com/docker/docker/api/types/swarm:go_default_library",
+    ],
+)

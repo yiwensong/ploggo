@@ -5,6 +5,6 @@ py_binary(
     name = "main",
     srcs = ["main.py"],
     deps = import_deps + [
-        "//ledger_reader/sheets_api:sheets_api",
+        "//ledger_reader/sheets_api",
     ],
 )

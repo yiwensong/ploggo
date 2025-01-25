@@ -1,0 +1,14 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "lru_cache.go",
+        "stmtcache.go",
+        "unlimited_cache.go",
+    ],
+    importmap = "github.com/yiwensong/ploggo/vendor/github.com/jackc/pgx/v5/internal/stmtcache",
+    importpath = "github.com/jackc/pgx/v5/internal/stmtcache",
+    visibility = ["//vendor/github.com/jackc/pgx/v5:__subpackages__"],
+    deps = ["//vendor/github.com/jackc/pgx/v5/pgconn:go_default_library"],
+)

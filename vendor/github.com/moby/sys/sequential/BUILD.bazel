@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "doc.go",
+        "sequential_unix.go",
+        "sequential_windows.go",
+    ],
+    importmap = "github.com/yiwensong/ploggo/vendor/github.com/moby/sys/sequential",
+    importpath = "github.com/moby/sys/sequential",
+    visibility = ["//visibility:public"],
+    deps = select({
+        "@rules_go//go/platform:windows": [
+            "//vendor/golang.org/x/sys/windows:go_default_library",
+        ],
+        "//conditions:default": [],
+    }),
+)

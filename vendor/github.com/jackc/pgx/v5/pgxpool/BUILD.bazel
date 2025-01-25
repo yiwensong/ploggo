@@ -1,0 +1,23 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "batch_results.go",
+        "conn.go",
+        "doc.go",
+        "pool.go",
+        "rows.go",
+        "stat.go",
+        "tracer.go",
+        "tx.go",
+    ],
+    importmap = "github.com/yiwensong/ploggo/vendor/github.com/jackc/pgx/v5/pgxpool",
+    importpath = "github.com/jackc/pgx/v5/pgxpool",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//vendor/github.com/jackc/pgx/v5:go_default_library",
+        "//vendor/github.com/jackc/pgx/v5/pgconn:go_default_library",
+        "//vendor/github.com/jackc/puddle/v2:go_default_library",
+    ],
+)

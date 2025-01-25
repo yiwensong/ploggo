@@ -1,0 +1,10 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["processor.go"],
+    importmap = "github.com/yiwensong/ploggo/vendor/github.com/testcontainers/testcontainers-go/exec",
+    importpath = "github.com/testcontainers/testcontainers-go/exec",
+    visibility = ["//visibility:public"],
+    deps = ["//vendor/github.com/docker/docker/pkg/stdcopy:go_default_library"],
+)

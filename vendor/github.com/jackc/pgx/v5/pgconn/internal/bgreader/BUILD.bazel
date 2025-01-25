@@ -1,0 +1,10 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["bgreader.go"],
+    importmap = "github.com/yiwensong/ploggo/vendor/github.com/jackc/pgx/v5/pgconn/internal/bgreader",
+    importpath = "github.com/jackc/pgx/v5/pgconn/internal/bgreader",
+    visibility = ["//vendor/github.com/jackc/pgx/v5/pgconn:__subpackages__"],
+    deps = ["//vendor/github.com/jackc/pgx/v5/internal/iobufpool:go_default_library"],
+)

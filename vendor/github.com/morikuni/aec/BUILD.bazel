@@ -1,0 +1,14 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "aec.go",
+        "ansi.go",
+        "builder.go",
+        "sgr.go",
+    ],
+    importmap = "github.com/yiwensong/ploggo/vendor/github.com/morikuni/aec",
+    importpath = "github.com/morikuni/aec",
+    visibility = ["//visibility:public"],
+)

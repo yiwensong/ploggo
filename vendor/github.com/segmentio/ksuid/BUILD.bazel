@@ -1,0 +1,16 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "base62.go",
+        "ksuid.go",
+        "rand.go",
+        "sequence.go",
+        "set.go",
+        "uint128.go",
+    ],
+    importmap = "github.com/yiwensong/ploggo/vendor/github.com/segmentio/ksuid",
+    importpath = "github.com/segmentio/ksuid",
+    visibility = ["//visibility:public"],
+)

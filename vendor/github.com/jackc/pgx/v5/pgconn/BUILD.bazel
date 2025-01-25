@@ -1,0 +1,29 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "auth_scram.go",
+        "config.go",
+        "defaults.go",
+        "defaults_windows.go",
+        "doc.go",
+        "errors.go",
+        "krb5.go",
+        "pgconn.go",
+    ],
+    importmap = "github.com/yiwensong/ploggo/vendor/github.com/jackc/pgx/v5/pgconn",
+    importpath = "github.com/jackc/pgx/v5/pgconn",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//vendor/github.com/jackc/pgpassfile:go_default_library",
+        "//vendor/github.com/jackc/pgservicefile:go_default_library",
+        "//vendor/github.com/jackc/pgx/v5/internal/iobufpool:go_default_library",
+        "//vendor/github.com/jackc/pgx/v5/internal/pgio:go_default_library",
+        "//vendor/github.com/jackc/pgx/v5/pgconn/ctxwatch:go_default_library",
+        "//vendor/github.com/jackc/pgx/v5/pgconn/internal/bgreader:go_default_library",
+        "//vendor/github.com/jackc/pgx/v5/pgproto3:go_default_library",
+        "//vendor/golang.org/x/crypto/pbkdf2:go_default_library",
+        "//vendor/golang.org/x/text/secure/precis:go_default_library",
+    ],
+)

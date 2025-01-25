@@ -1,5 +1,5 @@
-load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 load("@pydeps//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 
 py_binary(
     name = "main",
@@ -17,5 +17,5 @@ py_library(
         requirement("google-api-python-client"),
         requirement("httplib2"),
         requirement("google-auth-oauthlib"),
-    ]
+    ],
 )

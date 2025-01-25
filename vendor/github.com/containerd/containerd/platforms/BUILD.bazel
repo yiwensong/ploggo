@@ -1,0 +1,28 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "compare.go",
+        "cpuinfo.go",
+        "database.go",
+        "defaults.go",
+        "defaults_darwin.go",
+        "defaults_unix.go",
+        "defaults_windows.go",
+        "platforms.go",
+    ],
+    importmap = "github.com/yiwensong/ploggo/vendor/github.com/containerd/containerd/platforms",
+    importpath = "github.com/containerd/containerd/platforms",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//vendor/github.com/containerd/containerd/errdefs:go_default_library",
+        "//vendor/github.com/containerd/containerd/log:go_default_library",
+        "//vendor/github.com/opencontainers/image-spec/specs-go/v1:go_default_library",
+    ] + select({
+        "@rules_go//go/platform:windows": [
+            "//vendor/golang.org/x/sys/windows:go_default_library",
+        ],
+        "//conditions:default": [],
+    }),
+)

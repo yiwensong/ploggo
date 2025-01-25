@@ -1,0 +1,12 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "userns_linux.go",
+        "userns_unsupported.go",
+    ],
+    importmap = "github.com/yiwensong/ploggo/vendor/github.com/containerd/containerd/pkg/userns",
+    importpath = "github.com/containerd/containerd/pkg/userns",
+    visibility = ["//visibility:public"],
+)

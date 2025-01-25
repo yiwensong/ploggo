@@ -1,0 +1,12 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "gen_stack.go",
+        "stack.go",
+    ],
+    importmap = "github.com/yiwensong/ploggo/vendor/github.com/jackc/puddle/v2/internal/genstack",
+    importpath = "github.com/jackc/puddle/v2/internal/genstack",
+    visibility = ["//vendor/github.com/jackc/puddle/v2:__subpackages__"],
+)
