@@ -19,4 +19,4 @@ pip.parse(
     python_version = "3.13",
     requirements_lock = "python-requirements/requirements.txt",
 )
-use_repo(pip, "pip")
+use_repo(pip, pydeps = "pip")

@@ -5,3 +5,5 @@ google-auth-oauthlib
 httplib2
 
 pyyaml
+
+attrs

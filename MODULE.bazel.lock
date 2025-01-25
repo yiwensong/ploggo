@@ -951,7 +951,7 @@
         "bzlTransitiveDigest": "880hZJPVrcGcWBHaOqEAfNQSjgQ5d8dHHGbOunO2bQY=",
         "usagesDigest": "Rin8K3XNl11Psa8RaqFbfvwnq43lSE3lDGSF4J0WCbI=",
         "recordedFileInputs": {
-          "@@//python-requirements/requirements.txt": "43d1d31d174520188fafc882dbe896066d23fdc2e52c41f5e1553e5508e89b9b",
+          "@@//python-requirements/requirements.txt": "a3b2e7e8fa1231febf50dff0819c6ad3c24e43d4992f2ffd8b043e2b51d73d58",
           "@@protobuf+//python/requirements.txt": "983be60d3cec4b319dcab6d48aeb3f5b2f7c3350f26b3a9e97486c37967c73c5",
           "@@rules_fuzzing+//fuzzing/requirements.txt": "ab04664be026b632a0d2a2446c4f65982b7654f5b6851d2f9d399a19b7242a5b",
           "@@rules_python+//tools/publish/requirements_darwin.txt": "095d4a4f3d639dce831cd493367631cd51b53665292ab20194bac2c0c6458fa8",
@@ -964,6 +964,15 @@
           "RULES_PYTHON_REPO_DEBUG_VERBOSITY": null
         },
         "generatedRepoSpecs": {
+          "pip_313_attrs": {
+            "repoRuleId": "@@rules_python+//python/private/pypi:whl_library.bzl%whl_library",
+            "attributes": {
+              "dep_template": "@pip//{name}:{target}",
+              "python_interpreter_target": "@@rules_python++python+python_3_13_host//:python",
+              "repo": "pip_313",
+              "requirement": "attrs==24.3.0 --hash=sha256:8f5c07333d543103541ba7be0e2ce16eeee8130cb0b3f9238ab904ce1e85baff --hash=sha256:ac96cd038792094f438ad1f6ff80837353805ac950cd2aa0e0625ef19850c308"
+            }
+          },
           "pip_313_cachetools": {
             "repoRuleId": "@@rules_python+//python/private/pypi:whl_library.bzl%whl_library",
             "attributes": {
@@ -3665,6 +3674,7 @@
               "repo_name": "pip",
               "extra_hub_aliases": {},
               "whl_map": {
+                "attrs": "{\"pip_313_attrs\":[{\"version\":\"3.13\"}]}",
                 "cachetools": "{\"pip_313_cachetools\":[{\"version\":\"3.13\"}]}",
                 "certifi": "{\"pip_313_certifi\":[{\"version\":\"3.13\"}]}",
                 "charset_normalizer": "{\"pip_313_charset_normalizer\":[{\"version\":\"3.13\"}]}",
@@ -3690,6 +3700,7 @@
                 "urllib3": "{\"pip_313_urllib3\":[{\"version\":\"3.13\"}]}"
               },
               "packages": [
+                "attrs",
                 "cachetools",
                 "certifi",
                 "charset_normalizer",

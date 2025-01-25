@@ -4,6 +4,10 @@
 #
 #    bazel run //:requirements.update
 #
+attrs==24.3.0 \
+    --hash=sha256:8f5c07333d543103541ba7be0e2ce16eeee8130cb0b3f9238ab904ce1e85baff \
+    --hash=sha256:ac96cd038792094f438ad1f6ff80837353805ac950cd2aa0e0625ef19850c308
+    # via -r python-requirements/requirements.in
 cachetools==5.5.1 \
     --hash=sha256:70f238fbba50383ef62e55c6aff6d9673175fe59f7c6782c7a0b9e38f4a9df95 \
     --hash=sha256:b76651fdc3b24ead3c648bbdeeb940c1b04d365b38b4af66788f9ec4a81d42bb
@@ -113,7 +117,7 @@ google-api-core==2.24.0 \
 google-api-python-client==2.159.0 \
     --hash=sha256:55197f430f25c907394b44fa078545ffef89d33fd4dca501b7db9f0d8e224bd6 \
     --hash=sha256:baef0bb631a60a0bd7c0bf12a5499e3a40cd4388484de7ee55c1950bf820a0cf
-    # via -r requirements.in
+    # via -r python-requirements/requirements.in
 google-auth==2.38.0 \
     --hash=sha256:8285113607d3b80a3f1543b75962447ba8a09fe85783432a784fdeef6ac094c4 \
     --hash=sha256:e7dae6694313f434a2727bf2906f27ad259bae090d7aa896590d86feec3d9d4a
@@ -129,7 +133,7 @@ google-auth-httplib2==0.2.0 \
 google-auth-oauthlib==1.2.1 \
     --hash=sha256:2d58a27262d55aa1b87678c3ba7142a080098cbc2024f903c62355deb235d91f \
     --hash=sha256:afd0cad092a2eaa53cd8e8298557d6de1034c6cb4a740500b5357b648af97263
-    # via -r requirements.in
+    # via -r python-requirements/requirements.in
 googleapis-common-protos==1.66.0 \
     --hash=sha256:c3e7b33d15fdca5374cc0a7346dd92ffa847425cc4ea941d970f13680052ec8c \
     --hash=sha256:d7abcd75fabb2e0ec9f74466401f6c119a0b498e27370e9be4c94cb7e382b8ed
@@ -138,7 +142,7 @@ httplib2==0.22.0 \
     --hash=sha256:14ae0a53c1ba8f3d37e9e27cf37eabb0fb9980f435ba405d546948b009dd64dc \
     --hash=sha256:d7a10bc5ef5ab08322488bde8c726eeee5c8618723fdb399597ec58f3d82df81
     # via
-    #   -r requirements.in
+    #   -r python-requirements/requirements.in
     #   google-api-python-client
     #   google-auth-httplib2
 idna==3.10 \
@@ -237,7 +241,7 @@ pyyaml==6.0.2 \
     --hash=sha256:efdca5630322a10774e8e98e1af481aad470dd62c3170801852d752aa7a783ba \
     --hash=sha256:f753120cb8181e736c57ef7636e83f31b9c0d1722c516f7e86cf15b7aa57ff12 \
     --hash=sha256:ff3824dc5261f50c9b0dfb3be22b4567a6f938ccce4587b38952d85fd9e9afe4
-    # via -r requirements.in
+    # via -r python-requirements/requirements.in
 requests==2.32.3 \
     --hash=sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760 \
     --hash=sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6
