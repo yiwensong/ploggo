@@ -1,6 +1,6 @@
 import argparse
 import asyncio
-import collections
+import typing
 import http.client
 import os
 import random
@@ -82,7 +82,7 @@ def get_credentials(client_secrets_path: str):
         client_secrets_path,
         scopes,
     )
-    credentials = flow.run_console()
+    credentials = flow.run_local_server()
 
     return credentials
 
@@ -108,7 +108,7 @@ async def initialize_upload_async(youtube, options):
             tags=tags,
             categoryId=options.category,
         ),
-        status=dict(privacyStatus=options.privacyStatus),
+        status=dict(privacyStatus=options.privacy_status),
     )
 
     # Call the API's videos.insert method to create and upload the video.
@@ -173,7 +173,7 @@ async def resumable_upload_async(insert_request):
             await asyncio.sleep(sleep_seconds)
 
 
-class UploadOptions(collections.namedtuple):
+class UploadOptions(typing.NamedTuple):
     file: str
     title: str
     description: str
@@ -220,7 +220,10 @@ def do_upload():
         title=args.title,
         description=args.description,
         category=args.category,
-        privacy_status=args.privacy_status,
+        privacy_status=args.privacyStatus,
         keywords=args.keywords,
     )
     asyncio.run(initialize_upload_async(youtube, upload_options))
+
+if __name__=="__main__":
+    do_upload()
