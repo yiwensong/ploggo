@@ -1,3 +1,18 @@
+# 2.2.2 (September 10, 2024)
+
+* Add empty acquire time to stats (Maxim Ivanov)
+* Stop importing nanotime from runtime via linkname (maypok86)
+
+# 2.2.1 (July 15, 2023)
+
+* Fix: CreateResource cannot overflow pool. This changes documented behavior of CreateResource. Previously,
+  CreateResource could create a resource even if the pool was full. This could cause the pool to overflow. While this
+  was documented, it was documenting incorrect behavior. CreateResource now returns an error if the pool is full.
+
+# 2.2.0 (February 11, 2023)
+
+* Use Go 1.19 atomics and drop go.uber.org/atomic dependency
+
 # 2.1.2 (November 12, 2022)
 
 * Restore support to Go 1.18 via go.uber.org/atomic
