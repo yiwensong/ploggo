@@ -72,7 +72,7 @@ func (r *HandRank) Compare(other *HandRank) int {
 }
 
 // Converts an array of card.Card to int
-func cardsToInt(cards []card.Card) []int {
+func CardsToInt(cards []card.Card) []int {
 	ints := make([]int, len(cards))
 	for i, card_ := range cards {
 		ints[i] = card_.CardNum()
@@ -162,10 +162,7 @@ func straighted(cardRanks []card.Rank) bool {
 	for _, curr := range cardRanks[1:] {
 		if curr+1 != prev {
 			// Check special case A,5,4,3,2
-			if checkWheel(cardRanks) {
-				return true
-			}
-			return false
+			return checkWheel(cardRanks)
 		}
 		prev = curr
 	}
@@ -332,10 +329,10 @@ func NewSimpleHandEvaluator(hole []card.Card, community []card.Card) *SimpleHand
 
 func (h *SimpleHandImpl) BestHand() (*HandRank, error) {
 	if len(h.hole) < 4 || len(h.hole) > 5 {
-		return nil, fmt.Errorf("Expected 4 or 5 hole cards, instead got: %d", len(h.hole))
+		return nil, fmt.Errorf("expected 4 or 5 hole cards, instead got: %d", len(h.hole))
 	}
 	if len(h.community) != 5 {
-		return nil, fmt.Errorf("Expected 5 community cards, instead got: %d", len(h.community))
+		return nil, fmt.Errorf("expected 5 community cards, instead got: %d", len(h.community))
 	}
 
 	var best *HandRank = nil

@@ -76,10 +76,10 @@ func TestCompare(t *testing.T) {
 
 func TestSuited_Success(t *testing.T) {
 	cases := [][]int{
-		[]int{0, 4, 16, 20, 44},
-		[]int{1, 9, 13, 25, 49},
-		[]int{2, 6, 10, 14, 18},
-		[]int{3, 15, 19, 43, 51},
+		{0, 4, 16, 20, 44},
+		{1, 9, 13, 25, 49},
+		{2, 6, 10, 14, 18},
+		{3, 15, 19, 43, 51},
 	}
 
 	for _, handInt := range cases {
@@ -94,10 +94,10 @@ func TestSuited_Success(t *testing.T) {
 
 func TestSuited_Failure(t *testing.T) {
 	cases := [][]int{
-		[]int{0, 4, 17, 20, 44},
-		[]int{1, 9, 11, 25, 49},
-		[]int{2, 4, 9, 15, 19},
-		[]int{4, 15, 19, 43, 51},
+		{0, 4, 17, 20, 44},
+		{1, 9, 11, 25, 49},
+		{2, 4, 9, 15, 19},
+		{4, 15, 19, 43, 51},
 	}
 
 	for _, handInt := range cases {
@@ -139,21 +139,21 @@ func TestSmallSort(t *testing.T) {
 
 func TestStraighted_Success(t *testing.T) {
 	cases := [][]card.Rank{
-		[]card.Rank{
+		{
 			card.Rank(9),
 			card.Rank(8),
 			card.Rank(7),
 			card.Rank(6),
 			card.Rank(5),
 		},
-		[]card.Rank{
+		{
 			card.Rank(12),
 			card.Rank(11),
 			card.Rank(10),
 			card.Rank(9),
 			card.Rank(8),
 		},
-		[]card.Rank{
+		{
 			card.Rank(12),
 			card.Rank(3),
 			card.Rank(2),
@@ -172,21 +172,21 @@ func TestStraighted_Success(t *testing.T) {
 
 func TestStraighted_Failure(t *testing.T) {
 	cases := [][]card.Rank{
-		[]card.Rank{
+		{
 			card.Rank(10),
 			card.Rank(8),
 			card.Rank(7),
 			card.Rank(6),
 			card.Rank(5),
 		},
-		[]card.Rank{
+		{
 			card.Rank(12),
 			card.Rank(11),
 			card.Rank(9),
 			card.Rank(9),
 			card.Rank(8),
 		},
-		[]card.Rank{
+		{
 			card.Rank(12),
 			card.Rank(3),
 			card.Rank(2),
