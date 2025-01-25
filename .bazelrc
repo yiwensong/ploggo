@@ -1,1 +1,2 @@
 # startup --loading_phase_threads=1
+common --enable_bzlmod

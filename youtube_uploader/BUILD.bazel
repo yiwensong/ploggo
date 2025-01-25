@@ -1,0 +1,24 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+load("@pip//:requirements.bzl", "requirement")
+
+
+py_binary(
+    name = "main",
+    srcs = ["main.py"],
+    deps = [
+        ":uploader",
+        requirement("google-api-python-client"),
+        requirement("pyyaml"),
+    ],
+)
+
+py_library(
+    name = "uploader",
+    srcs = ["uploader.py"],
+    deps = [
+        requirement("google-api-python-client"),
+        requirement("httplib2"),
+        requirement("google-auth"),
+        requirement("google-auth-oauthlib"),
+    ]
+)

@@ -1,43 +1,35 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v1.2.1-1
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
-        language_version: python3.7
+        language_version: python3.13
       - id: end-of-file-fixer
-        language_version: python3.7
+        language_version: python3.13
       - id: check-yaml
-        language_version: python3.7
+        language_version: python3.13
       - id: debug-statements
-        language_version: python3.7
+        language_version: python3.13
       - id: name-tests-test
-        language_version: python3.7
+        language_version: python3.13
       - id: check-added-large-files
-        language_version: python3.7
+        language_version: python3.13
       - id: check-byte-order-marker
-        language_version: python3.7
-      - id: flake8
-        language_version: python3.7
+        language_version: python3.13
       - id: requirements-txt-fixer
-        language_version: python3.7
+        language_version: python3.13
       - id: detect-private-key
-        language_version: python3.7
+        language_version: python3.13
   - repo: https://github.com/asottile/reorder_python_imports
-    rev: v1.1.0
+    rev: v3.14.0
     hooks:
       - id: reorder-python-imports
-  - repo: https://github.com/pre-commit/mirrors-autopep8
-    rev: v1.4.3
+  - repo: https://github.com/hhatto/autopep8
+    rev: v2.3.2
     hooks:
     -   id: autopep8
   - repo: https://github.com/psf/black
-    rev: stable
+    rev: 24.10.0
     hooks:
       - id: black
-        language_version: python3.7
-  - repo: local
-    hooks:
-      - id: buildifier
-        name: run buildifier
-        entry: "bazel run //:buildifier"
-        language: system
+        language_version: python3.13
