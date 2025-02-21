@@ -28,6 +28,7 @@ bazel_dep(name = "platforms", version = "0.0.10")
 bazel_dep(name = "rules_go", version = "0.52.0")
 go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
 go_sdk.download(version = "1.23.1")
+go_sdk.nogo(nogo = "//:go_vet")
 
 bazel_dep(name = "rules_oci", version = "2.2.0")
 oci = use_extension("@rules_oci//oci:pull.bzl", "oci")
