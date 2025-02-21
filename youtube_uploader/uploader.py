@@ -79,7 +79,7 @@ VALID_PRIVACY_STATUSES = ("public", "private", "unlisted")
 
 
 def get_credentials(client_secrets_path: str):
-    scopes = ["https://www.googleapis.com/auth/youtube.upload"]
+    scopes = [YOUTUBE_UPLOAD_SCOPE]
     flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
         client_secrets_path,
         scopes,
