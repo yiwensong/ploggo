@@ -1,0 +1,9 @@
+{
+    "exclude": [
+        "bazel-bin/**",
+        "bazel-out/**",
+        "bazel-ploggo/**",
+        "bazel-testlogs/**",
+        "**/.git"
+    ]
+}
