@@ -1,6 +1,6 @@
 # youtube_uploader
 
-This is a lightweight python program that will take all videos in a directory and upload it to youtube.
+This is a lightweight python program that will take all videos (currently only looks at .mp4 files) in a directory and upload it to youtube.
 
 ## Setup
 You will need to acquire a client secret from google following this doc:  
