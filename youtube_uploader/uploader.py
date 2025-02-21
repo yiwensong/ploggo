@@ -1,5 +1,7 @@
 import argparse
 import asyncio
+import datetime
+import time
 import typing
 import http.client
 import os
@@ -129,10 +131,15 @@ async def initialize_upload_async(youtube, options):
         media_body=MediaFileUpload(options.file, chunksize=-1, resumable=True),
     )
 
+    start_perf_counter_ns = time.perf_counter_ns()
     try:
         await resumable_upload_async(insert_request)
     except HttpError as e:
         print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
+    upload_time = time.perf_counter_ns() - start_perf_counter_ns
+    upload_time_seconds = upload_time / 1_000_000_000
+    upload_time_str = str(datetime.timedelta(seconds=upload_time_seconds))
+    print(f"Upload took {upload_time_str}")
 
 
 # This method implements an exponential backoff strategy to resume a
@@ -149,7 +156,7 @@ async def resumable_upload_async(insert_request):
                 if "id" in response:
                     print("Video id '%s' was successfully uploaded." % response["id"])
                 else:
-                    exit("The upload failed with an unexpected response: %s" % response)
+                    exit(f"The upload failed with an unexpected response: {response}, status: {status}")
         except HttpError as e:
             if e.resp.status in RETRIABLE_STATUS_CODES:
                 error = "A retriable HTTP error %d occurred:\n%s" % (
