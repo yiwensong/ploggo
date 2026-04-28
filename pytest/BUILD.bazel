@@ -1,9 +1,11 @@
+load("@pydeps//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_binary")
-load(":pydeps.bzl", "import_deps")
 
 py_binary(
     name = "main",
     srcs = ["main.py"],
     visibility = ["//visibility:public"],
-    deps = import_deps,
+    deps = [
+        requirement("pytest"),
+    ],
 )

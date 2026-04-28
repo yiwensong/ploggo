@@ -1,11 +1,15 @@
+load("@pydeps//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_library", "py_test")
-load("//ledger_reader:pydeps.bzl", "import_deps")
 
 py_library(
     name = "sheets_api",
     srcs = ["__init__.py"],
     visibility = ["//visibility:public"],
-    deps = import_deps,
+    deps = [
+        requirement("google-api-python-client"),
+        requirement("google-auth-oauthlib"),
+        requirement("pandas"),
+    ],
 )
 
 py_test(

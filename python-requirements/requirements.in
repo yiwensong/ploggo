@@ -7,3 +7,9 @@ httplib2
 pyyaml
 
 attrs
+
+arrow
+
+pandas
+
+pytest

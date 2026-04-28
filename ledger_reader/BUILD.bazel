@@ -1,10 +1,12 @@
+load("@pydeps//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_binary")
-load(":pydeps.bzl", "import_deps")
 
 py_binary(
     name = "main",
     srcs = ["main.py"],
-    deps = import_deps + [
+    deps = [
         "//ledger_reader/sheets_api",
+        requirement("arrow"),
+        requirement("pandas"),
     ],
 )
