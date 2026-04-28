@@ -71,7 +71,13 @@ go_library(
         "@rules_go//go/platform:openbsd": [
             "//vendor/golang.org/x/sys/unix:go_default_library",
         ],
+        "@rules_go//go/platform:osx": [
+            "//vendor/golang.org/x/sys/unix:go_default_library",
+        ],
         "@rules_go//go/platform:plan9": [
+            "//vendor/golang.org/x/sys/unix:go_default_library",
+        ],
+        "@rules_go//go/platform:qnx": [
             "//vendor/golang.org/x/sys/unix:go_default_library",
         ],
         "@rules_go//go/platform:solaris": [

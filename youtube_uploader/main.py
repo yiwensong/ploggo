@@ -102,9 +102,10 @@ async def main_async() -> None:
     print(f"videos from {args.video_directory_root}")
     print(f"videos count {len(videos)}")
 
-    youtube = uploader.get_authenticated_service(args.client_secrets_path)
+    youtube = uploader.get_authenticated_service(args.client_secrets_path) if not args.dry_run else None
 
     async with asyncio.TaskGroup() as tg:
+        tasks_by_video: dict[str, asyncio.Task] = {}
         for video in videos:
             upload_options = uploader.UploadOptions(
                 file=video,
@@ -114,13 +115,12 @@ async def main_async() -> None:
                 privacy_status="unlisted",
                 keywords="",
             )
-            if args.dry_run:
-                print(f"Dry run: not uploading {video}")
-                print(upload_options)
-                continue
-            tg.create_task(uploader.initialize_upload_async(youtube, upload_options))
+            upload_awaitable = uploader.initialize_upload_async if not args.dry_run else uploader.dry_run_upload_task
+            task = tg.create_task(upload_awaitable(youtube, upload_options))
+            tasks_by_video[video] = task
     
-    write_uploaded(args.run_env, videos)
+    done_videos = [video for video, task in tasks_by_video.items() if task.result() is None]
+    write_uploaded(args.run_env, done_videos)
 
 
 if __name__ == "__main__":

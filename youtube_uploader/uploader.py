@@ -96,9 +96,18 @@ def get_authenticated_service(client_secrets_path: str):
         YOUTUBE_API_VERSION,
         credentials=credentials,
     )
+    
 
+async def dry_run_upload_task(_, options) -> Exception | None:
+    print("Dry run upload:")
+    print(options)
+    await asyncio.sleep(1)
+    
 
-async def initialize_upload_async(youtube, options):
+async def initialize_upload_async(youtube, options) -> Exception | None:
+    if youtube is None:
+        return ValueError("youtube service must not be None for non-dry run upload")
+
     tags = None
     if options.keywords:
         tags = options.keywords.split(",")
@@ -132,14 +141,17 @@ async def initialize_upload_async(youtube, options):
     )
 
     start_perf_counter_ns = time.perf_counter_ns()
+    err = None
     try:
         await resumable_upload_async(insert_request)
     except HttpError as e:
-        print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
+        err = e
+        print("An HTTP error %d occurred:\n%s" % (err.resp.status, err.content))
     upload_time = time.perf_counter_ns() - start_perf_counter_ns
     upload_time_seconds = upload_time / 1_000_000_000
     upload_time_str = str(datetime.timedelta(seconds=upload_time_seconds))
     print(f"Upload took {upload_time_str}")
+    return err
 
 
 # This method implements an exponential backoff strategy to resume a

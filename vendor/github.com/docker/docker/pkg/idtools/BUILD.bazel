@@ -69,7 +69,17 @@ go_library(
             "//vendor/github.com/opencontainers/runc/libcontainer/user:go_default_library",
             "//vendor/github.com/pkg/errors:go_default_library",
         ],
+        "@rules_go//go/platform:osx": [
+            "//vendor/github.com/docker/docker/pkg/system:go_default_library",
+            "//vendor/github.com/opencontainers/runc/libcontainer/user:go_default_library",
+            "//vendor/github.com/pkg/errors:go_default_library",
+        ],
         "@rules_go//go/platform:plan9": [
+            "//vendor/github.com/docker/docker/pkg/system:go_default_library",
+            "//vendor/github.com/opencontainers/runc/libcontainer/user:go_default_library",
+            "//vendor/github.com/pkg/errors:go_default_library",
+        ],
+        "@rules_go//go/platform:qnx": [
             "//vendor/github.com/docker/docker/pkg/system:go_default_library",
             "//vendor/github.com/opencontainers/runc/libcontainer/user:go_default_library",
             "//vendor/github.com/pkg/errors:go_default_library",
