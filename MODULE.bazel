@@ -5,6 +5,7 @@ module(
 
 bazel_dep(name = "platforms", version = "1.0.0")
 bazel_dep(name = "rules_python", version = "2.0.0")
+bazel_dep(name = "rules_cc", version = "0.1.1")
 bazel_dep(name = "aspect_bazel_lib", version = "2.22.5")
 bazel_dep(name = "bazel_lib", version = "3.2.2")
 
@@ -32,10 +33,17 @@ go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
 go_sdk.download(version = "1.23.1")
 go_sdk.nogo(nogo = "//:go_vet")
 
-bazel_dep(name = "rules_oci", version = "2.2.0")
-oci = use_extension("@rules_oci//oci:pull.bzl", "oci")
+bazel_dep(name = "rules_oci", version = "2.2.2")
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 oci.pull(
     name = "distroless_java",
     digest = "sha256:161a1d97d592b3f1919801578c3a47c8e932071168a96267698f4b669c24c76d",
     image = "gcr.io/distroless/java17",
 )
+oci.pull(
+    name = "postgres_image",
+    digest = "sha256:4e6e670bb069649261c9c18031f0aded7bb249a5b6664ddec29c013a89310d50",
+    image = "index.docker.io/library/postgres",
+    platforms = ["linux/amd64"],
+)
+use_repo(oci, "distroless_java", "postgres_image")

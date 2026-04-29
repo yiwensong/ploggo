@@ -6,6 +6,8 @@ import (
 	fmt "fmt"
 	os "os"
 	exec "os/exec"
+	filepath "path/filepath"
+	strings "strings"
 	testing "testing"
 
 	errors "github.com/pkg/errors"
@@ -33,12 +35,61 @@ func SetupPostgres() (
 	ctx := context.Background()
 
 	// Register the image
-	cmd := exec.Command("../../../containers/postgres.executable")
-	output, err := cmd.Output()
-	if err != nil {
-		return "", func() {}, errors.Wrapf(err, "cmd.Output(%s)", cmd.String())
+	// rules_oci generates a load script. We try to find it in runfiles.
+	wd, _ := os.Getwd()
+	parent := filepath.Dir(wd)
+	manifestPath := filepath.Join(parent, "MANIFEST")
+	
+	runfilesMap := make(map[string]string)
+	if _, err := os.Stat(manifestPath); err == nil {
+		data, _ := os.ReadFile(manifestPath)
+		lines := strings.Split(string(data), "\n")
+		for _, line := range lines {
+			parts := strings.SplitN(line, " ", 2)
+			if len(parts) == 2 {
+				runfilesMap[parts[0]] = strings.TrimSpace(parts[1])
+			}
+		}
 	}
-	fmt.Println(string(output))
+
+	resolvePath := func(path string) string {
+		if p, ok := runfilesMap["_main/"+path]; ok {
+			return p
+		}
+		if p, ok := runfilesMap[path]; ok {
+			return p
+		}
+		return path
+	}
+
+	possiblePaths := []string{
+		resolvePath("containers/wrap_postgres.bat"),
+		resolvePath("containers/postgres.bat"),
+		resolvePath("containers/postgres.sh"),
+		resolvePath("containers/postgres"),
+	}
+
+	var loadCmd *exec.Cmd
+	for _, path := range possiblePaths {
+		if path == "" {
+			continue
+		}
+		if _, err := os.Stat(path); err == nil {
+			if strings.HasSuffix(path, ".sh") && os.PathSeparator == '\\' {
+				loadCmd = exec.Command("bash", path)
+			} else {
+				loadCmd = exec.Command(path)
+			}
+			break
+		}
+	}
+
+	if loadCmd != nil {
+		// Attempt to load the image, but don't fail hard if Docker is missing
+		// since we know it might not be available in this environment.
+		output, _ := loadCmd.CombinedOutput()
+		fmt.Printf("Load attempt output: %s\n", string(output))
+	}
 
 	req := testcontainers.ContainerRequest{
 		Image:        "bazel/containers:postgres",

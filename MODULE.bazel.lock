@@ -184,8 +184,8 @@
     "https://bcr.bazel.build/modules/rules_license/0.0.7/MODULE.bazel": "088fbeb0b6a419005b89cf93fe62d9517c0a2b8bb56af3244af65ecfe37e7d5d",
     "https://bcr.bazel.build/modules/rules_license/1.0.0/MODULE.bazel": "a7fda60eefdf3d8c827262ba499957e4df06f659330bbe6cdbdb975b768bb65c",
     "https://bcr.bazel.build/modules/rules_license/1.0.0/source.json": "a52c89e54cc311196e478f8382df91c15f7a2bfdf4c6cd0e2675cc2ff0b56efb",
-    "https://bcr.bazel.build/modules/rules_oci/2.2.0/MODULE.bazel": "70c17da97cb2ba42e46c7aa640fec65d23a325c5d4fc01a83b2592e1b3fb5f3e",
-    "https://bcr.bazel.build/modules/rules_oci/2.2.0/source.json": "9563a659626152373ca3e13fab80280656949e2e4f3dbf14671fec6d8f39f72a",
+    "https://bcr.bazel.build/modules/rules_oci/2.2.2/MODULE.bazel": "f2afa49fbed0edb709b79d21d55db562f70450ca1a8527ff7b56fdf792bf26f7",
+    "https://bcr.bazel.build/modules/rules_oci/2.2.2/source.json": "91e19c82d3311d7531b143e24fbaa72d8942f5f4e23c640eb834b0a1322ff136",
     "https://bcr.bazel.build/modules/rules_pkg/0.7.0/MODULE.bazel": "df99f03fc7934a4737122518bb87e667e62d780b610910f0447665a7e2be62dc",
     "https://bcr.bazel.build/modules/rules_pkg/1.0.1/MODULE.bazel": "5b1df97dbc29623bccdf2b0dcd0f5cb08e2f2c9050aab1092fd39a41e82686ff",
     "https://bcr.bazel.build/modules/rules_pkg/1.0.1/source.json": "bd82e5d7b9ce2d31e380dd9f50c111d678c3bdaca190cb76b0e1c71b05e1ba8a",
@@ -308,8 +308,8 @@
     },
     "@@rules_oci+//oci:extensions.bzl%oci": {
       "general": {
-        "bzlTransitiveDigest": "IZcMMiT92uwCWxwDWw7bjT4SDWxgzRmq+rrnNAEM+Hg=",
-        "usagesDigest": "WiLNrZf7OA7zVHWHyLNM9G5GypZI1ruzI7Ka8PDvq3w=",
+        "bzlTransitiveDigest": "Ei0CV7qq6YG6LwnZ1uGVSUqKu19JSaNuhfSSoR0NDcA=",
+        "usagesDigest": "45gSP2m0z+LPcUsV+yUX1HuVB9CgHtSshnCWqyeYdOQ=",
         "recordedInputs": [
           "REPO_MAPPING:aspect_bazel_lib+,bazel_tools bazel_tools",
           "REPO_MAPPING:bazel_features+,bazel_tools bazel_tools",
@@ -318,6 +318,57 @@
           "REPO_MAPPING:rules_oci+,bazel_skylib bazel_skylib+"
         ],
         "generatedRepoSpecs": {
+          "distroless_java_single": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_pull",
+            "attributes": {
+              "scheme": "https",
+              "registry": "gcr.io",
+              "repository": "distroless/java17",
+              "identifier": "sha256:161a1d97d592b3f1919801578c3a47c8e932071168a96267698f4b669c24c76d",
+              "target_name": "distroless_java_single",
+              "bazel_tags": []
+            }
+          },
+          "distroless_java": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_alias",
+            "attributes": {
+              "target_name": "distroless_java",
+              "scheme": "https",
+              "registry": "gcr.io",
+              "repository": "distroless/java17",
+              "identifier": "sha256:161a1d97d592b3f1919801578c3a47c8e932071168a96267698f4b669c24c76d",
+              "platform": "@@rules_oci+//oci:distroless_java_single",
+              "bzlmod_repository": "distroless_java",
+              "reproducible": true
+            }
+          },
+          "postgres_image_linux_amd64": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_pull",
+            "attributes": {
+              "scheme": "https",
+              "registry": "index.docker.io",
+              "repository": "library/postgres",
+              "identifier": "sha256:4e6e670bb069649261c9c18031f0aded7bb249a5b6664ddec29c013a89310d50",
+              "platform": "linux/amd64",
+              "target_name": "postgres_image_linux_amd64",
+              "bazel_tags": []
+            }
+          },
+          "postgres_image": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_alias",
+            "attributes": {
+              "target_name": "postgres_image",
+              "scheme": "https",
+              "registry": "index.docker.io",
+              "repository": "library/postgres",
+              "identifier": "sha256:4e6e670bb069649261c9c18031f0aded7bb249a5b6664ddec29c013a89310d50",
+              "platforms": {
+                "@@platforms//cpu:x86_64": "@postgres_image_linux_amd64"
+              },
+              "bzlmod_repository": "postgres_image",
+              "reproducible": true
+            }
+          },
           "bazel_features_version": {
             "repoRuleId": "@@bazel_features+//private:version_repo.bzl%version_repo",
             "attributes": {}
@@ -743,7 +794,11 @@
           }
         },
         "moduleExtensionMetadata": {
-          "explicitRootModuleDirectDeps": [],
+          "explicitRootModuleDirectDeps": [
+            "distroless_java",
+            "postgres_image",
+            "postgres_image_linux_amd64"
+          ],
           "explicitRootModuleDirectDevDeps": [],
           "useAllRepos": "NO",
           "reproducible": false

@@ -33,6 +33,7 @@ go_test(
         "//containers:postgres",
     ],
     embed = [":go_default_library"],
+    tags = ["requires-docker"],
     deps = [
         "//avalon:go_default_library",
         "//vendor/github.com/pkg/errors:go_default_library",

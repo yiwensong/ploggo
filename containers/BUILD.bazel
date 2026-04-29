@@ -1,7 +1,20 @@
-load("@rules_oci//oci:defs.bzl", "oci_image")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
 
 oci_image(
     name = "test_image",
-    base = "@distroless_java//image",
+    base = "@distroless_java",
+    visibility = ["//visibility:public"],
+)
+
+oci_image(
+    name = "postgres_image",
+    base = "@postgres_image",
+    visibility = ["//visibility:public"],
+)
+
+oci_load(
+    name = "postgres",
+    image = ":postgres_image",
+    repo_tags = ["bazel/containers:postgres"],
     visibility = ["//visibility:public"],
 )
