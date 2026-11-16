@@ -1,0 +1,23 @@
+[package]
+name = "tempmember-bot"
+version = "0.1.0"
+edition = "2021"
+description = "Discord bot that removes temporary members from a server after a configurable window"
+license = "MIT"
+publish = false
+
+[dependencies]
+anyhow = "1"
+chrono = "0.4"
+chrono-tz = "0.10"
+clap = { version = "4", features = ["derive", "env"] }
+dirs = "6"
+serde = { version = "1", features = ["derive"] }
+serenity = { version = "0.12", default-features = false, features = ["builder", "http", "model", "rustls_backend", "chrono"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "time", "signal"] }
+toml = "0.8"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[dev-dependencies]
+tempfile = "3"
